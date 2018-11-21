@@ -3,6 +3,7 @@
 
 #include "engine/engine.h"
 
+using namespace renderframework;
 Engine engine;
 
 using namespace std;
@@ -118,6 +119,8 @@ void scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
     engine.viewExtent[1] *= static_cast<float>(yoffset);
     engine.viewExtent[2] *= static_cast<float>(yoffset);
     engine.viewExtent[3] *= static_cast<float>(yoffset);
+
+    std::cout << "Scroll: " << engine.viewExtent[0] << "," << engine.viewExtent[1] << "," << engine.viewExtent[2] << "," << engine.viewExtent[3] << std::endl;
 }
 
 int main()

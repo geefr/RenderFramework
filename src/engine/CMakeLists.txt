@@ -6,4 +6,4 @@ add_library( rf
  shaderprogram.h
 )
 
-target_link_libraries( rf OpenGL::GL )
+target_link_libraries( rf rfraster OpenGL::GL )

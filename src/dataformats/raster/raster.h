@@ -4,24 +4,10 @@
 #include <string>
 #include <memory>
 
-namespace renderengine
-{
+namespace renderframework { namespace raster {
     class Raster
     {
     public:
-        /**
-         * Constructor
-         *
-         * Child classes must:
-         * - Determine the file parameters, and set class members
-         * - Allocate the data buffer through allocateData
-         * - Populate the data buffer with pixel data
-         *
-         * Data is assumed to be either 24-bit RGB or 32-bit RGBA
-         *
-         * @param fileName The raster to load
-         */
-        Raster( std::string fileName );
         virtual ~Raster();
 
         /// Width in pixels
@@ -43,6 +29,20 @@ namespace renderengine
         bool saveToRaw(std::string fileName);
 
     protected:
+        /**
+         * Constructor
+         *
+         * Child classes must:
+         * - Determine the file parameters, and set class members
+         * - Allocate the data buffer through allocateData
+         * - Populate the data buffer with pixel data
+         *
+         * Data is assumed to be either 24-bit RGB or 32-bit RGBA
+         *
+         * @param fileName The raster to load
+         */
+        Raster( std::string fileName );
+
         void allocateData(uint32_t size);
 
         std::string mFileName;
@@ -52,6 +52,6 @@ namespace renderengine
         uint32_t mDataSize = 0;
         std::unique_ptr<uint8_t[]> mData;
     };
-}
+} }
 
 #endif // RASTERLOADER_H

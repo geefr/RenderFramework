@@ -3,8 +3,8 @@
 #include <stdexcept>
 #include <fstream>
 
-namespace renderengine
-{
+namespace renderframework { namespace raster {
+
     Raster::Raster( std::string fileName )
         : mFileName(fileName)
     {
@@ -34,4 +34,4 @@ namespace renderengine
     {
 
     }
-}
+} }

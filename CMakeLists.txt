@@ -17,6 +17,7 @@ endif()
 option( ENABLE_TEST "Enable tests" ON )
 option( ENABLE_THIRDPARTY "Enable third party components" ON )
 option( RASTER_PNG "PNG Support via libPNG" ON )
+option( VECTOR_PRIMITIVES "Basic primitive shapes" ON )
 
 # Compiler/Tool requirements
 set( CMAKE_CXX_STANDARD 17 )
@@ -25,6 +26,7 @@ set( CMAKE_CXX_FLAGS "-Werror=all" )
 # Package/System requirements
 find_package( glfw3 REQUIRED )
 find_package( OpenGL REQUIRED )
+find_package( glm REQUIRED )
 
 # Top level includes and such
 if( ENABLE_THIRDPARTY )

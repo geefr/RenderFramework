@@ -1,14 +1,23 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-#include "linmath.h"
+//#include "vecmaths.h"
 
-struct VertexDef
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
+using namespace glm;
+
+namespace renderframework
 {
-    vec3 coord;
-    vec2 texCoord;
-    vec4 color;
 
-};
+    struct VertexDef
+    {
+        vec3 coord;
+        vec2 texCoord;
+        vec4 color;
+
+    };
+}
 
 #endif // COMMON_H
