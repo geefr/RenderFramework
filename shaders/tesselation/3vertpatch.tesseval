@@ -1,0 +1,46 @@
+#version 450 core
+
+// Define the configuration of the eval shader
+// triangles - This shader works in the triangle domain (could also be quads and isolines)
+// equal_spacing - Triangle edges will be subdivided into segments with equal lengths
+// ccw - Triangles are emited in counter-clockwise order
+layout(triangles, equal_spacing, ccw) in;
+
+uniform mat4 projectionMatrix;
+
+// http://ogldev.atspace.co.uk/www/tutorial30/tutorial30.html
+// ^^ This uses a shader to specify the height of the output vertices, to perform
+// bump mapping as part of this shader. Could be useful later
+
+in vec3 worldPos_tessEval_in[];
+in vec2 texCoord_tessEval_in[];
+in vec4 texColor_tessEval_in[];
+
+out vec3 worldPos_frag_in;
+out vec2 texCoord_frag_in;
+out vec4 texColor_frag_in;
+
+vec2 interpolate2D(vec2 v0, vec2 v1, vec2 v2)
+{
+        return vec2(gl_TessCoord.x) * v0 + vec2(gl_TessCoord.y) * v1 + vec2(gl_TessCoord.z) * v2;
+}
+
+vec3 interpolate3D(vec3 v0, vec3 v1, vec3 v2)
+{
+        return vec3(gl_TessCoord.x) * v0 + vec3(gl_TessCoord.y) * v1 + vec3(gl_TessCoord.z) * v2;
+}
+
+vec4 interpolate4D(vec4 v0, vec4 v1, vec4 v2, vec4 v3)
+{
+        return vec4(gl_TessCoord.x) * v0 + vec4(gl_TessCoord.y) * v1 + vec4(gl_TessCoord.z) * v2 + vec4(1.0) * v3;
+}
+
+void main(void)
+{
+  worldPos_frag_in = interpolate3D(worldPos_tessEval_in[0], worldPos_tessEval_in[1], worldPos_tessEval_in[2]);
+  texCoord_frag_in = interpolate2D(texCoord_tessEval_in[0], texCoord_tessEval_in[1], texCoord_tessEval_in[2]);
+  texColor_frag_in = interpolate4D(texColor_tessEval_in[0], texColor_tessEval_in[1], texColor_tessEval_in[2], texColor_tessEval_in[3]);
+
+  // Output the position of the vertex
+  gl_Position = projectionMatrix * vec4(worldPos_frag_in, 1.0);
+}
