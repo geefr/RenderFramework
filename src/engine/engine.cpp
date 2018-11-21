@@ -184,6 +184,10 @@ namespace renderframework
         {
             vertexData.push_back({v, vec2(), vec4(1.f,1.f,1.f,1.f)});
         }
+        for( auto i=0u;i < cube.vertexColors().size(); ++i )
+        {
+            vertexData[i].color = cube.vertexColors()[i];
+        }
 
 /*
         vertexData.push_back({vec3(-.6f,-.6f,-1.f), vec2(), vec4(1.f,0.f,0.f,1.f)});

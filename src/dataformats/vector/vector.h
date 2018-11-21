@@ -18,6 +18,8 @@ namespace renderframework { namespace vector {
          * @return vertex data for this vector
          */
         const std::vector<vec3>& vertices();
+        const std::vector<vec4>& vertexColors();
+        const std::vector<vec3>& normals();
     protected:
         /**
          * Constructor
