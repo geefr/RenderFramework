@@ -10,9 +10,7 @@
 #include <vector>
 
 #include "dataformats/raster/png/pngloader.h"
-#include "dataformats/vector/gdal/gdalloader.h"
 #include "common.h"
-#include "featuremodel/featuremodel.h"
 #include "engine/shaderprogram.h"
 
 class Engine

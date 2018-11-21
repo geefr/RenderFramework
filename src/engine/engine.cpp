@@ -171,6 +171,7 @@ void Engine::init()
 
     ////////////////////////////////////////////////////////////
     // Generate the vertex data and such
+    /*
     std::vector<Loader> loaders = {
         StaticShapeLoader(StaticShapeLoader::Geometry::Cube),
     };
@@ -179,7 +180,7 @@ void Engine::init()
     {
         auto vd = loaders.vertices();
         vertexData.insert(std::end(vertexData), std::begin(vd), std::end(vd));
-    }
+    }*/
 
     // Do something really naughty here to trick the tesselation
     // As we know we'll be using tesselation patches of size 3 when drawing
@@ -217,9 +218,9 @@ void Engine::init()
     texturedVectorShader.regUniform("texture0");
     texturedVectorShader.regUniform("enableTexture0");
 
-    texturedVectorShader.regAttribute("vertCoord", 3, GL_FLOAT, FALSE, sizeof(VertexDef), reinterpret_cast<const void*>(offsetof(VertexDef,coord)));
-    texturedVectorShader.regAttribute("vertTexCoord", 2, GL_FLOAT, FALSE, sizeof(VertexDef), reinterpret_cast<const void*>(offsetof(VertexDef,texCoord)));
-    texturedVectorShader.regAttribute("vertTexColor", 4, GL_FLOAT, FALSE, sizeof(VertexDef), reinterpret_cast<const void*>(offsetof(VertexDef,color)));
+    texturedVectorShader.regAttribute("vertCoord", 3, GL_FLOAT, false, sizeof(VertexDef), reinterpret_cast<const void*>(offsetof(VertexDef,coord)));
+    texturedVectorShader.regAttribute("vertTexCoord", 2, GL_FLOAT, false, sizeof(VertexDef), reinterpret_cast<const void*>(offsetof(VertexDef,texCoord)));
+    texturedVectorShader.regAttribute("vertTexColor", 4, GL_FLOAT, false, sizeof(VertexDef), reinterpret_cast<const void*>(offsetof(VertexDef,color)));
 
     // Lighting uniforms
     texturedVectorShader.regUniform("light.ambient.intensity");
