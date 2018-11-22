@@ -7,7 +7,18 @@ struct Light
     vec3 specular;
     vec3 position;
 };
+
+struct Material
+{
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+    float shininess;
+};
+
 uniform Light light;
+uniform Material material;
+
 // Eye position in world space
 uniform vec3 eyePos;
 
@@ -25,15 +36,15 @@ void main(void)
     vec3 eyeDir = normalize(eyePos - worldPos_frag_in);
 
     // Ambient component
-    vec4 ambient = vec4(light.ambient, 1.0);
+    vec4 ambient = vec4(light.ambient * material.ambient, 1.0);
 
     // Diffuse component
-    vec4 diffuse = vec4(light.diffuse * max(dot(normal, lightDir), 0.0), 1.0);
+    vec4 diffuse = vec4(light.diffuse * max(dot(normal, lightDir) * material.diffuse, 0.0), 1.0) ;
 
     // Specular component
     // TODO: shininess hardcoded to 32
     vec3 specularReflectDir = reflect(-lightDir, normal);
-    vec4 specular = vec4(light.specular * pow(max(dot(eyeDir, specularReflectDir), 0.0), 32), 1.0);
+    vec4 specular = vec4(light.specular * pow(max(dot(eyeDir, specularReflectDir), 0.0), material.shininess) * material.specular, 1.0);
 
-    fragColor = (ambient + diffuse + specular) * texColor_frag_in;
+    fragColor = (ambient + diffuse + specular);// * texColor_frag_in;
 }

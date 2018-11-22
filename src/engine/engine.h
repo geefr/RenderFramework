@@ -57,9 +57,10 @@ namespace renderframework
 
         struct Material
         {
-            vec3 ambientReflectance;
-            vec3 diffuseReflectance;
-            vec3 specularReflectance;
+            // Reflectance values for each component
+            vec3 ambient;
+            vec3 diffuse;
+            vec3 specular;
             float shininess;
         };
 
@@ -75,6 +76,10 @@ namespace renderframework
         GLuint catTexture;
         GLuint vertexBuffer;
         std::vector<VertexDef> vertexData;
+
+
+        std::map<std::string, Material> mMaterials;
+        Material mMaterial;
     };
 }
 
