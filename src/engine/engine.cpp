@@ -235,7 +235,7 @@ namespace renderframework
         ////////////////////////////////////////////////////////////
         // Let's load some shaders
         mShader.addShader(GL_VERTEX_SHADER, dataDir + "shaders/vertex/default.vert");
-        mShader.addShader(GL_FRAGMENT_SHADER, dataDir + "shaders/fragment/diffuse.frag");
+        mShader.addShader(GL_FRAGMENT_SHADER, dataDir + "shaders/fragment/specular.frag");
         mShader.addShader(GL_TESS_CONTROL_SHADER, dataDir + "shaders/tesselation/3vertpatch.tesscont");
         mShader.addShader(GL_TESS_EVALUATION_SHADER, dataDir + "shaders/tesselation/3vertpatch.tesseval");
         // Link the shader
@@ -259,6 +259,9 @@ namespace renderframework
         mShader.regUniform("light.specular");
         mShader.regUniform("light.position");
 
+        // Eye position for specular calculations
+        mShader.regUniform("eyePos");
+
 
         ////////////////////////////////////////////////////////////
         // Setup some textures and stuff
@@ -278,9 +281,9 @@ namespace renderframework
         light.specular[0] = 1.0f;
         light.specular[1] = 1.0f;
         light.specular[2] = 1.0f;
-        light.specular *= 0.2f;
+        light.specular *= 1.0f;
 
-        light.position = vec3(1.f,0.f,1.f);
+        light.position = vec3(1.f,0.0f,1.f);
 
         ////////////////////////////////////////////////////////////
     }
@@ -310,7 +313,8 @@ namespace renderframework
         m = rotate(m, viewRot[2], vec3(0.f,0.f,1.f));
 
         // eye, center, up
-        v = lookAt(vec3(0.f,0.f,1.0f),vec3(0.f,0.f,0.f),vec3(0.f,1.f,0.f));
+        vec3 eyePos(0.f,0.f,1.0f);
+        v = lookAt(eyePos,vec3(0.f,0.f,0.f),vec3(0.f,1.f,0.f));
 
         // fov, aspect, near plane distance, far plane distance
         p = perspective(90.f, width / height, 0.1f, 10.0f );
@@ -335,6 +339,8 @@ namespace renderframework
         glUniform3fv(mShader.uniform("light.diffuse"), 1, value_ptr(light.diffuse));
         glUniform3fv(mShader.uniform("light.specular"), 1, value_ptr(light.specular));
         glUniform3fv(mShader.uniform("light.position"), 1, value_ptr(light.position));
+
+        glUniform3fv(mShader.uniform("eyePos"), 1, value_ptr(eyePos));
 
         glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
 

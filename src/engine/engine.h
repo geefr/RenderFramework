@@ -31,6 +31,7 @@ namespace renderframework
     vec2 windowSize{ 800.0f, 600.0f };
     vec3 viewRot{ 0.0f, 0.0f, 0.0f };
     vec3 viewRotDelta{ 0.01f, 0.015f, 0.02f };
+    //vec3 viewRotDelta{ 0.f,0.f,0.f };
 
     private:
 
