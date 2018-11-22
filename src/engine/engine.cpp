@@ -186,7 +186,12 @@ namespace renderframework
         }
         for( auto i=0u;i < cube.vertexColors().size(); ++i )
         {
-            vertexData[i].color = cube.vertexColors()[i];
+            //vertexData[i].color = cube.vertexColors()[i];
+            vertexData[i].color = { 0.5f, 0.5, 0.5f, 1.0f };
+        }
+        for( auto i=0u;i < cube.normals().size(); ++i )
+        {
+            vertexData[i].normal = cube.normals()[i];
         }
 
 /*
@@ -229,26 +234,30 @@ namespace renderframework
 
         ////////////////////////////////////////////////////////////
         // Let's load some shaders
-        texturedVectorShader.addShader(GL_VERTEX_SHADER, dataDir + "shaders/vertex/default.vert");
-        texturedVectorShader.addShader(GL_FRAGMENT_SHADER, dataDir + "shaders/fragment/default.frag");
-        texturedVectorShader.addShader(GL_TESS_CONTROL_SHADER, dataDir + "shaders/tesselation/3vertpatch.tesscont");
-        texturedVectorShader.addShader(GL_TESS_EVALUATION_SHADER, dataDir + "shaders/tesselation/3vertpatch.tesseval");
+        mShader.addShader(GL_VERTEX_SHADER, dataDir + "shaders/vertex/default.vert");
+        mShader.addShader(GL_FRAGMENT_SHADER, dataDir + "shaders/fragment/diffuse.frag");
+        mShader.addShader(GL_TESS_CONTROL_SHADER, dataDir + "shaders/tesselation/3vertpatch.tesscont");
+        mShader.addShader(GL_TESS_EVALUATION_SHADER, dataDir + "shaders/tesselation/3vertpatch.tesseval");
         // Link the shader
-        texturedVectorShader.id();
+        mShader.id();
 
-        texturedVectorShader.regUniform("modelViewProjectionMatrix");
-        texturedVectorShader.regUniform("modelMatrix");
-        texturedVectorShader.regUniform("projectionMatrix");
-        texturedVectorShader.regUniform("texture0");
-        texturedVectorShader.regUniform("enableTexture0");
+        mShader.regUniform("modelViewProjectionMatrix");
+        mShader.regUniform("modelMatrix");
+        mShader.regUniform("viewMatrix");
+        mShader.regUniform("projectionMatrix");
+        mShader.regUniform("texture0");
+        mShader.regUniform("enableTexture0");
 
-        texturedVectorShader.regAttribute("vertCoord", 3, GL_FLOAT, GL_FALSE, sizeof(VertexDef), reinterpret_cast<const void*>(offsetof(VertexDef,coord)));
-        texturedVectorShader.regAttribute("vertTexCoord", 2, GL_FLOAT, GL_FALSE, sizeof(VertexDef), reinterpret_cast<const void*>(offsetof(VertexDef,texCoord)));
-        texturedVectorShader.regAttribute("vertTexColor", 4, GL_FLOAT, GL_FALSE, sizeof(VertexDef), reinterpret_cast<const void*>(offsetof(VertexDef,color)));
+        mShader.regAttribute("vertCoord", 3, GL_FLOAT, GL_FALSE, sizeof(VertexDef), reinterpret_cast<const void*>(offsetof(VertexDef,coord)));
+        mShader.regAttribute("vertTexCoord", 2, GL_FLOAT, GL_FALSE, sizeof(VertexDef), reinterpret_cast<const void*>(offsetof(VertexDef,texCoord)));
+        mShader.regAttribute("vertTexColor", 4, GL_FLOAT, GL_FALSE, sizeof(VertexDef), reinterpret_cast<const void*>(offsetof(VertexDef,color)));
+        mShader.regAttribute("vertNormal", 3, GL_FLOAT, GL_FALSE, sizeof(VertexDef), reinterpret_cast<const void*>(offsetof(VertexDef,normal)));
 
         // Lighting uniforms
-        texturedVectorShader.regUniform("light.ambient.intensity");
-        texturedVectorShader.regUniform("light.ambient.color");
+        mShader.regUniform("light.ambient");
+        mShader.regUniform("light.diffuse");
+        mShader.regUniform("light.specular");
+        mShader.regUniform("light.position");
 
 
         ////////////////////////////////////////////////////////////
@@ -256,15 +265,27 @@ namespace renderframework
         //catTexture = loadTexture(dataDir + "textures/cat.png");
         ////////////////////////////////////////////////////////////
         // Setup the lighting
-        light.ambient.color[0] = 1.0f;
-        light.ambient.color[1] = 1.0f;
-        light.ambient.color[2] = 1.0f;
-        light.ambient.intensity = 1.0f;
+        light.ambient[0] = 1.0f;
+        light.ambient[1] = 1.0f;
+        light.ambient[2] = 1.0f;
+        light.ambient *= 0.2f;
+
+        light.diffuse[0] = 1.0f;
+        light.diffuse[1] = 1.0f;
+        light.diffuse[2] = 1.0f;
+        light.diffuse *= 0.8f;
+
+        light.specular[0] = 1.0f;
+        light.specular[1] = 1.0f;
+        light.specular[2] = 1.0f;
+        light.specular *= 0.2f;
+
+        light.position = vec3(1.f,0.f,1.f);
 
         ////////////////////////////////////////////////////////////
     }
 
-    void Engine::loop( int width, int height )
+    void Engine::loop( float width, float height )
     {
         viewRot[0] += viewRotDelta[0];
         viewRot[1] += viewRotDelta[1];
@@ -275,44 +296,45 @@ namespace renderframework
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        mat4x4 m(1.0f);
-        mat4x4 p(1.0f);
-        mat4x4 mvp(1.0f);
+        mat4x4 m(1.f);
+        mat4x4 v(1.f);
+        mat4x4 p(1.f);
+        mat4x4 mvp(1.f);
 
         //mat4x4_identity(m);
 
+        m = translate(m, vec3(0.f,0.f,-0.5f));
+
         m = rotate(m, viewRot[0], vec3(1.f,0.f,0.f));
+        m = rotate(m, viewRot[1], vec3(0.f,1.f,0.f));
         m = rotate(m, viewRot[2], vec3(0.f,0.f,1.f));
-        //mat4x4_rotate_X(m, m, viewRot[0]);
-        //mat4x4_rotate_Z(m, m, viewRot[2]);
 
-        // Model currently centered in view
-        // Need to set viewCenter to the center
-        // Not sure why x needs to be inverted but y doesn't, probably a bug
-        m = translate(m, vec3(-viewCenter[0],viewCenter[1],0.f));
-        //mat4x4_translate_in_place(m, -viewCenter[0], viewCenter[1], 0.f);
+        // eye, center, up
+        v = lookAt(vec3(0.f,0.f,1.0f),vec3(0.f,0.f,0.f),vec3(0.f,1.f,0.f));
 
-        // Bottom-left, Top-right
-        // Near plane, far plane
-        //mat4x4_ortho(p, viewExtent[0], viewExtent[1], viewExtent[2], viewExtent[3], 1.0f, -1.0f);
-        p = ortho(viewExtent[0], viewExtent[1], viewExtent[2], viewExtent[3]);
+        // fov, aspect, near plane distance, far plane distance
+        p = perspective(90.f, width / height, 0.1f, 10.0f );
 
-        //mat4x4_mul(mvp, p, m);
-        mvp = p * m;
+        mvp = p * v * m;
 
-        glUseProgram(texturedVectorShader.id());
+        glUseProgram(mShader.id());
 
-        glUniformMatrix4fv(texturedVectorShader.uniform("modelViewProjectionMatrix"), 1, GL_FALSE, reinterpret_cast<const GLfloat*>(&mvp));
-        glUniformMatrix4fv(texturedVectorShader.uniform("modelMatrix"), 1, GL_FALSE, reinterpret_cast<const GLfloat*>(&m));
-        glUniformMatrix4fv(texturedVectorShader.uniform("projectionMatrix"), 1, GL_FALSE, reinterpret_cast<const GLfloat*>(&p));
+        glUniformMatrix4fv(mShader.uniform("modelViewProjectionMatrix"), 1, GL_FALSE, value_ptr(mvp));
+        glUniformMatrix4fv(mShader.uniform("modelMatrix"), 1, GL_FALSE, value_ptr(m));
+        glUniformMatrix4fv(mShader.uniform("viewMatrix"), 1, GL_FALSE, value_ptr(v));
+        glUniformMatrix4fv(mShader.uniform("projectionMatrix"), 1, GL_FALSE, value_ptr(p));
 
+        /*
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, catTexture);
-        glUniform1i(texturedVectorShader.uniform("texture0"), 0);
-        glUniform1i(texturedVectorShader.uniform("enableTexture0"), false);
+        glUniform1i(mShader.uniform("texture0"), 0);
+        glUniform1i(mShader.uniform("enableTexture0"), false);
+        */
 
-        glUniform1f(texturedVectorShader.uniform("light.ambient.intensity"), light.ambient.intensity);
-        glUniform3fv(texturedVectorShader.uniform("light.ambient.color"), 1, &(light.ambient.color[0]));
+        glUniform3fv(mShader.uniform("light.ambient"), 1, value_ptr(light.ambient));
+        glUniform3fv(mShader.uniform("light.diffuse"), 1, value_ptr(light.diffuse));
+        glUniform3fv(mShader.uniform("light.specular"), 1, value_ptr(light.specular));
+        glUniform3fv(mShader.uniform("light.position"), 1, value_ptr(light.position));
 
         glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
 

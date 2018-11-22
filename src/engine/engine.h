@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "dataformats/raster/png/rfpng.h"
+#include "dataformats/vector/vector.h"
 #include "common.h"
 #include "engine/shaderprogram.h"
 
@@ -18,7 +19,7 @@ namespace renderframework
     public:
         Engine();
     void init();
-    void loop( int width, int height );
+    void loop( float width, float height );
 
     [[noreturn]] static void quit(std::string msg);
 
@@ -29,7 +30,7 @@ namespace renderframework
     vec2 cursorPos{ 0.0f, 0.0f };
     vec2 windowSize{ 800.0f, 600.0f };
     vec3 viewRot{ 0.0f, 0.0f, 0.0f };
-    vec3 viewRotDelta{ 0.0f, 0.0f, 0.0f };
+    vec3 viewRotDelta{ 0.01f, 0.015f, 0.02f };
 
     private:
 
@@ -47,28 +48,32 @@ namespace renderframework
 
         struct Light
         {
-            struct Ambient
-            {
-                vec3 color;
-                float intensity;
-            };
-            struct Diffuse
-            {
-
-            };
-
-            Ambient ambient;
-            Diffuse diffuse;
+            vec3 ambient;
+            vec3 diffuse;
+            vec3 specular;
+            vec3 position;
         };
+
+        struct Material
+        {
+            vec3 ambientReflectance;
+            vec3 diffuseReflectance;
+            vec3 specularReflectance;
+            float shininess;
+        };
+
+
+
+
         Light light;
 
-        ShaderProgram texturedVectorShader;
+        ShaderProgram mShader;
 
         GLuint vao;
 
         GLuint catTexture;
         GLuint vertexBuffer;
-            std::vector<VertexDef> vertexData;
+        std::vector<VertexDef> vertexData;
     };
 }
 

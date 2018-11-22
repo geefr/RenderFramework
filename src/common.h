@@ -5,6 +5,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 using namespace glm;
 
@@ -16,7 +17,7 @@ namespace renderframework
         vec3 coord;
         vec2 texCoord;
         vec4 color;
-
+        vec3 normal;
     };
 }
 

@@ -7,10 +7,12 @@ layout(vertices = 3) out;
 in vec3 worldPos_tessCont_in[];
 in vec2 texCoord_tessCont_in[];
 in vec4 texColor_tessCont_in[];
+in vec3 worldNormal_tessCont_in[];
 
 out vec3 worldPos_tessEval_in[];
 out vec2 texCoord_tessEval_in[];
 out vec4 texColor_tessEval_in[];
+out vec3 worldNormal_tessEval_in[];
 
 // A basic tesselation control shader which should suffice for initial implementation
 // From http://voxels.blogspot.com/2011/09/tesselation-shader-tutorial-with-source.html
@@ -21,6 +23,7 @@ void main(void)
   worldPos_tessEval_in[gl_InvocationID] = worldPos_tessCont_in[gl_InvocationID];
   texCoord_tessEval_in[gl_InvocationID] = texCoord_tessCont_in[gl_InvocationID];
   texColor_tessEval_in[gl_InvocationID] = texColor_tessCont_in[gl_InvocationID];
+  worldNormal_tessEval_in[gl_InvocationID] = worldNormal_tessCont_in[gl_InvocationID];
 
   // Calculate tesselation levels
   // For a triangle patch only the first 3 outer and first inner are useable
