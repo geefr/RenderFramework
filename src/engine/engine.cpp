@@ -52,7 +52,7 @@ namespace renderframework
         mMaterials["white rubber"]={{	0.05	,0.05	,0.05}, {	0.5	,0.5	,0.5}, {	0.7,	0.7,	0.7}, .078125 * 256.0};
         mMaterials["yellow rubber"]={{	0.05,	0.05	,0.0}, {	0.5	,0.5	,0.4}, {	0.7,	0.7,	0.04}, .078125 * 256.0};
 
-        mMaterial = mMaterials["green plastic"];
+        mMaterial = mMaterials["brass"];
     }
 
     //l/r/b/t
@@ -285,13 +285,12 @@ namespace renderframework
         mShader.regUniform("light.specular");
         mShader.regUniform("light.position");
 
-        mShader.regUniform("material.ambient");
-        mShader.regUniform("material.diffuse");
-        mShader.regUniform("material.specular");
-        mShader.regUniform("material.shininess");
-
         // Eye position for specular calculations
         mShader.regUniform("eyePos");
+
+        // We're going to use the phong materials with this shader, so register them
+        // Only needs to be done once even if we switch material later
+        materials::PhongMaterialBare::registerUniforms(mShader);
 
 
         ////////////////////////////////////////////////////////////
@@ -307,12 +306,12 @@ namespace renderframework
         light.diffuse[0] = 1.0f;
         light.diffuse[1] = 1.0f;
         light.diffuse[2] = 1.0f;
-        light.diffuse *= 0.8f;
+        light.diffuse *= 0.6f;
 
         light.specular[0] = 1.0f;
         light.specular[1] = 1.0f;
         light.specular[2] = 1.0f;
-        light.specular *= 1.0f;
+        light.specular *= 0.2f;
 
         light.position = vec3(1.f,0.0f,1.f);
 
@@ -371,10 +370,7 @@ namespace renderframework
         glUniform3fv(mShader.uniform("light.specular"), 1, value_ptr(light.specular));
         glUniform3fv(mShader.uniform("light.position"), 1, value_ptr(light.position));
 
-        glUniform3fv(mShader.uniform("material.ambient"), 1, value_ptr(mMaterial.ambient));
-        glUniform3fv(mShader.uniform("material.diffuse"), 1, value_ptr(mMaterial.diffuse));
-        glUniform3fv(mShader.uniform("material.specular"), 1, value_ptr(mMaterial.specular));
-        glUniform1f(mShader.uniform("material.shininess"), mMaterial.shininess);
+        mMaterial.setUniforms(mShader);
 
         glUniform3fv(mShader.uniform("eyePos"), 1, value_ptr(eyePos));
 

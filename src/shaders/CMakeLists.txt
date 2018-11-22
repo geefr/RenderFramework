@@ -4,6 +4,10 @@ function( addShader SHADER )
 endfunction()
 
 addShader(vertex/default.vert)
+
 addShader(tesselation/3vertpatch.tesscont)
 addShader(tesselation/3vertpatch.tesseval)
-addShader(fragment/default.frag)
+
+addShader(fragment/ambient.frag)
+addShader(fragment/diffuse.frag)
+addShader(fragment/phong.frag)

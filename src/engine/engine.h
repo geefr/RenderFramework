@@ -11,6 +11,7 @@
 #include "dataformats/vector/vector.h"
 #include "common.h"
 #include "engine/shaderprogram.h"
+#include "materials/phongmaterialbare.h"
 
 namespace renderframework
 {
@@ -32,6 +33,7 @@ namespace renderframework
     vec3 viewRot{ 0.0f, 0.0f, 0.0f };
     vec3 viewRotDelta{ 0.01f, 0.015f, 0.02f };
     //vec3 viewRotDelta{ 0.f,0.f,0.f };
+
 
     private:
 
@@ -55,16 +57,6 @@ namespace renderframework
             vec3 position;
         };
 
-        struct Material
-        {
-            // Reflectance values for each component
-            vec3 ambient;
-            vec3 diffuse;
-            vec3 specular;
-            float shininess;
-        };
-
-
 
 
         Light light;
@@ -78,8 +70,8 @@ namespace renderframework
         std::vector<VertexDef> vertexData;
 
 
-        std::map<std::string, Material> mMaterials;
-        Material mMaterial;
+        std::map<std::string, materials::PhongMaterialBare> mMaterials;
+        materials::PhongMaterialBare mMaterial;
     };
 }
 
