@@ -18,6 +18,8 @@ void main(void)
     worldPos_tessCont_in = vec3(modelMatrix * vec4(vertCoord, 1.0));
     texCoord_tessCont_in = vertTexCoord;
     texColor_tessCont_in = vertTexColor;
+
     // Lighting calculations are performed in world space
-    worldNormal_tessCont_in = vec3(modelMatrix * vec4(vertNormal, 1.0));
+    // This uses the 'normal matrix' which scales/rotates correctly for the normals
+    worldNormal_tessCont_in = mat3(transpose(inverse(modelMatrix))) * vertNormal;
 }
