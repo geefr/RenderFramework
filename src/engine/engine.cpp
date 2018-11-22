@@ -25,6 +25,7 @@ namespace renderframework
     }
 
     Engine::Engine()
+        : cube({.0f,.0f,-5.f}, {6.0f, 4.0f, 1.0f})
     {
 
         mMaterials["emerald"]={{	0.0215,	0.1745	,0.0215}, {	0.07568,	0.61424,	0.07568}, {	0.633,	0.727811,	0.633}, 	0.6 * 256.0};
@@ -53,6 +54,11 @@ namespace renderframework
         mMaterials["yellow rubber"]={{	0.05,	0.05	,0.0}, {	0.5	,0.5	,0.4}, {	0.7,	0.7,	0.04}, .078125 * 256.0};
 
         mMaterial = mMaterials["brass"];
+
+        light.mAmbient = {.2f,.2f,.2f};
+        light.mDiffuse = {.6f,.6f,.6f};
+        light.mSpecular = {.2f,.2f,.2f};
+        light.mPosition = {1.f,0.f,1.f};
     }
 
     //l/r/b/t
@@ -205,7 +211,7 @@ namespace renderframework
 
         ////////////////////////////////////////////////////////////
         // Generate the vertex data and such
-        vector::Cube cube({}, {2.0f, 2.0f, 2.0f});
+
         for( auto& v: cube.vertices() )
         {
             vertexData.push_back({v, vec2(), vec4(1.f,1.f,1.f,1.f)});
@@ -280,10 +286,7 @@ namespace renderframework
         mShader.regAttribute("vertNormal", 3, GL_FLOAT, GL_FALSE, sizeof(VertexDef), reinterpret_cast<const void*>(offsetof(VertexDef,normal)));
 
         // Lighting uniforms
-        mShader.regUniform("light.ambient");
-        mShader.regUniform("light.diffuse");
-        mShader.regUniform("light.specular");
-        mShader.regUniform("light.position");
+        Light::registerUniforms(mShader);
 
         // Eye position for specular calculations
         mShader.regUniform("eyePos");
@@ -297,23 +300,7 @@ namespace renderframework
         // Setup some textures and stuff
         //catTexture = loadTexture(dataDir + "textures/cat.png");
         ////////////////////////////////////////////////////////////
-        // Setup the lighting
-        light.ambient[0] = 1.0f;
-        light.ambient[1] = 1.0f;
-        light.ambient[2] = 1.0f;
-        light.ambient *= 0.2f;
 
-        light.diffuse[0] = 1.0f;
-        light.diffuse[1] = 1.0f;
-        light.diffuse[2] = 1.0f;
-        light.diffuse *= 0.6f;
-
-        light.specular[0] = 1.0f;
-        light.specular[1] = 1.0f;
-        light.specular[2] = 1.0f;
-        light.specular *= 0.2f;
-
-        light.position = vec3(1.f,0.0f,1.f);
 
         ////////////////////////////////////////////////////////////
     }
@@ -336,11 +323,13 @@ namespace renderframework
 
         //mat4x4_identity(m);
 
-        m = translate(m, vec3(0.f,0.f,-0.5f));
+        //m = translate(m, vec3(0.f,0.f,-0.5f));
 
+        m = translate(m, cube.mCenter);
         m = rotate(m, viewRot[0], vec3(1.f,0.f,0.f));
         m = rotate(m, viewRot[1], vec3(0.f,1.f,0.f));
         m = rotate(m, viewRot[2], vec3(0.f,0.f,1.f));
+        m = translate(m, -cube.mCenter);
 
         // eye, center, up
         vec3 eyePos(0.f,0.f,1.0f);
@@ -365,11 +354,7 @@ namespace renderframework
         glUniform1i(mShader.uniform("enableTexture0"), false);
         */
 
-        glUniform3fv(mShader.uniform("light.ambient"), 1, value_ptr(light.ambient));
-        glUniform3fv(mShader.uniform("light.diffuse"), 1, value_ptr(light.diffuse));
-        glUniform3fv(mShader.uniform("light.specular"), 1, value_ptr(light.specular));
-        glUniform3fv(mShader.uniform("light.position"), 1, value_ptr(light.position));
-
+        light.setUniforms(mShader);
         mMaterial.setUniforms(mShader);
 
         glUniform3fv(mShader.uniform("eyePos"), 1, value_ptr(eyePos));

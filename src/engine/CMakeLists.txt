@@ -5,6 +5,9 @@ add_library( rf
  shaderprogram.cpp
  shaderprogram.h
 
+ light.h
+ light.cpp
+
  materials/material.h
  materials/material.cpp
  materials/phongmaterialbare.h
