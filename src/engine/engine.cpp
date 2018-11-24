@@ -26,7 +26,6 @@ namespace renderframework
 
     Engine::Engine()
     {
-
         auto addMat = [&](std::string name, vec3 a, vec3 b, vec3 c, float d) {
           mMaterials[name].reset( new materials::PhongMaterialBare(a,b,c,d) );
         };
@@ -58,7 +57,7 @@ namespace renderframework
 
         light.mAmbient = {.2f,.2f,.2f};
         light.mDiffuse = {.6f,.6f,.6f};
-        light.mSpecular = {.2f,.2f,.2f};
+        light.mSpecular = {.8f,.8f,.8f};
         light.mPosition = {1.f,0.f,1.f};
     }
 
@@ -84,49 +83,6 @@ namespace renderframework
         }
     }
 
-/*
-    GLuint Engine::loadAndCompileShader( GLenum shaderType, std::string path )
-    {
-        std::ifstream file(path);
-        if(!file.is_open()) quit("Failed to open shader: " + path);
-
-        std::string shaderSource( (std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-
-        //std::cerr << "Loaded shader source: " << path << "\n" << shaderSource << std::endl;
-
-        auto shader = glCreateShader(shaderType);
-        auto* srcPtr = shaderSource.c_str();
-        glShaderSource(shader, 1, &srcPtr, nullptr);
-        checkGlError();
-        glCompileShader(shader);
-        checkGlError();
-
-        return shader;
-    }
-
-    GLuint Engine::linkShaders( const std::initializer_list<GLuint>& v )
-    {
-        auto prog = glCreateProgram();
-        for( auto& shad : v ) glAttachShader(prog, shad);
-        glLinkProgram(prog);
-        checkGlError();
-
-        GLint linkSuccess = 0;
-        glGetProgramiv(prog, GL_LINK_STATUS, &linkSuccess);
-        if( linkSuccess == GL_FALSE )
-        {
-            GLint logLength = 0;
-            glGetProgramiv(prog, GL_INFO_LOG_LENGTH, &logLength);
-            std::vector<GLchar> log(static_cast<std::vector<GLchar>::size_type>(logLength));
-            glGetProgramInfoLog(prog, logLength, &logLength, &log[0]);
-            glDeleteProgram(prog);
-
-            quit("Failed to link shader: " + std::string(reinterpret_cast<const char*>(&log[0])));
-        }
-
-        return prog;
-    }
-*/
     GLuint Engine::loadTexture( std::string fileName )
     {
         GLuint tex;
@@ -155,16 +111,7 @@ namespace renderframework
         glGenerateMipmap(GL_TEXTURE_2D);
         return tex;
     }
-/*
-    GLuint Engine::createVertexBuffer( const std::vector<VertexDef>& data )
-    {
-        GLuint vertexBuffer;
-        glGenBuffers(1, &vertexBuffer);
-        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-        glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(data.size() * sizeof(VertexDef)), data.data(), GL_STATIC_DRAW);
-        return vertexBuffer;
-    }
-*/
+
     void Engine::setVertexAttribPointers(GLint vertCoordAttrib, GLint texCoordAttrib, GLint vertColorAttrib)
     {
         glEnableVertexAttribArray(static_cast<GLuint>(vertCoordAttrib));
@@ -220,10 +167,35 @@ namespace renderframework
         mShaders["phong"] = phong;
 
         // Generate the vertex data and such
-        mNode.reset(new nodes::MeshNodeDA());
-        mNode->meshes().emplace_back(new vector::Cube({.0f,.0f,-5.f}, {6.0f, 4.0f, 1.0f}));
-        mNode->shader() = phong;
-        mNode->material() = mMaterials["silver"];
+        mNode.reset(new nodes::Node());
+
+        {
+            std::shared_ptr<nodes::MeshNodeDA> cubeNode(new nodes::MeshNodeDA());
+            cubeNode->meshes().emplace_back(new vector::Cube({2.f,.0f,-2.f}, {2.0f, 2.0f, 2.0f}));
+            cubeNode->meshes().emplace_back(new vector::Cube({-2.f,.0f,-2.f}, {2.0f, 2.0f, 2.0f}));
+            cubeNode->meshes().emplace_back(new vector::Cube({2.f,.0f,2.f}, {2.0f, 2.0f, 2.0f}));
+            cubeNode->meshes().emplace_back(new vector::Cube({-2.f,.0f,2.f}, {2.0f, 2.0f, 2.0f}));
+            cubeNode->shader() = phong;
+            cubeNode->material() = mMaterials["silver"];
+            cubeNode->translation() = vec3(0.f,2.f,0.f);
+            cubeNode->rotation() = vec3(.1f,.1f,.1f);
+            cubeNode->scale() = vec3(.7f,.7f,.7f);
+            mNode->children().push_back(cubeNode);
+        }
+
+        {
+            std::shared_ptr<nodes::MeshNodeDA> cubeNode(new nodes::MeshNodeDA());
+            cubeNode->meshes().emplace_back(new vector::Cube({2.f,.0f,-2.f}, {2.0f, 2.0f, 2.0f}));
+            cubeNode->meshes().emplace_back(new vector::Cube({-2.f,.0f,-2.f}, {2.0f, 2.0f, 2.0f}));
+            cubeNode->meshes().emplace_back(new vector::Cube({2.f,.0f,2.f}, {2.0f, 2.0f, 2.0f}));
+            cubeNode->meshes().emplace_back(new vector::Cube({-2.f,.0f,2.f}, {2.0f, 2.0f, 2.0f}));
+            cubeNode->shader() = phong;
+            cubeNode->material() = mMaterials["gold"];
+            cubeNode->translation() = vec3(0.f,-2.f,0.f);
+            mNode->children().push_back(cubeNode);
+        }
+
+        mNode->translation() = vec3(0.f,0.f,-5.f);
 
         mNode->init();
         mNode->upload();
@@ -261,17 +233,8 @@ namespace renderframework
         mat4x4 m(1.f);
         mat4x4 v(1.f);
         mat4x4 p(1.f);
-        mat4x4 mvp(1.f);
 
-        //m = translate(m, vec3(0.f,0.f,-0.5f));
-
-
-        // = translate(m, cube.mCenter);
-        m = rotate(m, viewRot[0], vec3(1.f,0.f,0.f));
-        m = rotate(m, viewRot[1], vec3(0.f,1.f,0.f));
-        m = rotate(m, viewRot[2], vec3(0.f,0.f,1.f));
-        //m = translate(m, -cube.mCenter);
-
+        mNode->rotation() = viewRot;
 
         // eye, center, up
         vec3 eyePos(0.f,0.f,1.0f);
@@ -280,16 +243,9 @@ namespace renderframework
         // fov, aspect, near plane distance, far plane distance
         p = perspective(90.f, width / height, 0.1f, 10.0f );
 
-        mvp = p * v * m;
-
         auto shader = mShaders["phong"];
 
         glUseProgram(shader->id());
-
-        glUniformMatrix4fv(shader->uniform("modelViewProjectionMatrix"), 1, GL_FALSE, value_ptr(mvp));
-        glUniformMatrix4fv(shader->uniform("modelMatrix"), 1, GL_FALSE, value_ptr(m));
-        glUniformMatrix4fv(shader->uniform("viewMatrix"), 1, GL_FALSE, value_ptr(v));
-        glUniformMatrix4fv(shader->uniform("projectionMatrix"), 1, GL_FALSE, value_ptr(p));
         glUniform3fv(shader->uniform("eyePos"), 1, value_ptr(eyePos));
 
         /*
@@ -301,14 +257,6 @@ namespace renderframework
 
         light.setUniforms(*(shader.get()));
 
-        mNode->render();
-
-        //mMaterial.setUniforms(mShader);
-
-        //glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-
-        //glPatchParameteri(GL_PATCH_VERTICES, 3);
-        // TODO: losing precision -> GLsizei, so may need multiple draws here to manage it
-        //glDrawArrays(GL_PATCHES, 0, vertexData.size());
+        mNode->render(m, v, p);
     }
 }

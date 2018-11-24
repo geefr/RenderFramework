@@ -39,22 +39,24 @@ namespace renderframework { namespace nodes {
         std::vector<VertexDef> buffer;
         for( auto& mesh : mMeshes )
         {
+            std::vector<VertexDef> meshBuf;
             auto vertices = mesh->vertices();
             auto colors = mesh->vertexColors(); // TODO: Per-vertex colours ignored in shaders right now
             auto normals = mesh->normals();
 
             for( auto& v: vertices )
             {
-                buffer.push_back({v, {}, {}});
+                meshBuf.push_back({v, {}, {}});
             }
             for( auto i=0u;i < colors.size(); ++i )
             {
-                buffer[i].color = colors[i];
+                meshBuf[i].color = colors[i];
             }
             for( auto i=0u;i < normals.size(); ++i )
             {
-                buffer[i].normal = normals[i];
+                meshBuf[i].normal = normals[i];
             }
+            buffer.insert(std::end(buffer), std::begin(meshBuf), std::end(meshBuf));
         }
         mNumVerts = buffer.size();
 
@@ -72,14 +74,28 @@ namespace renderframework { namespace nodes {
         mShader->regAttribute("vertTexCoord", 2, GL_FLOAT, GL_FALSE, sizeof(VertexDef), reinterpret_cast<const void*>(offsetof(VertexDef,texCoord)));
         mShader->regAttribute("vertTexColor", 4, GL_FLOAT, GL_FALSE, sizeof(VertexDef), reinterpret_cast<const void*>(offsetof(VertexDef,color)));
         mShader->regAttribute("vertNormal", 3, GL_FLOAT, GL_FALSE, sizeof(VertexDef), reinterpret_cast<const void*>(offsetof(VertexDef,normal)));
+
+        mShader->regUniform("modelViewProjectionMatrix");
+        mShader->regUniform("modelMatrix");
+        mShader->regUniform("viewMatrix");
+        mShader->regUniform("projectionMatrix");
     }
 
-    void MeshNodeDA::doRender()
+    void MeshNodeDA::doRender(mat4x4 modelMat, mat4x4 viewMat, mat4x4 projMat)
     {
         glUseProgram(mShader->id());
         // TODO: Matrix uniforms and stuff
         mMaterial->setUniforms(mShader);
         // TODO: Lighting? How's that going to work?
+
+        mat4x4 mvp = modelMat;
+        mvp *= viewMat;
+        mvp *= projMat;
+
+        glUniformMatrix4fv(mShader->uniform("modelViewProjectionMatrix"), 1, GL_FALSE, value_ptr(mvp));
+        glUniformMatrix4fv(mShader->uniform("modelMatrix"), 1, GL_FALSE, value_ptr(modelMat));
+        glUniformMatrix4fv(mShader->uniform("viewMatrix"), 1, GL_FALSE, value_ptr(viewMat));
+        glUniformMatrix4fv(mShader->uniform("projectionMatrix"), 1, GL_FALSE, value_ptr(projMat));
 
         // TODO: Need to use triangles if the shader program doesn't use tesselation shaders
         // TODO: Patch vertices should be defined as part of shader, for now expect that it's already been setup

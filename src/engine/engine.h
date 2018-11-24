@@ -56,7 +56,7 @@ namespace renderframework
         std::map<std::string, std::shared_ptr<materials::PhongMaterialBare>> mMaterials;
         std::map<std::string, std::shared_ptr<ShaderProgram>> mShaders;
 
-        std::shared_ptr<nodes::MeshNodeDA> mNode;
+        std::shared_ptr<nodes::Node> mNode;
     };
 }
 

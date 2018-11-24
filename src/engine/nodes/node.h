@@ -42,7 +42,7 @@ namespace renderframework { namespace nodes {
         // to allow buffer contents/textures etc to change
         void upload();
         // Render this node and any children
-        void render();
+        void render(mat4x4 modelMat, mat4x4 viewMat, mat4x4 projMat);
     protected:
         // Children need to implement these
         // Will be called by the public versions of these
@@ -52,7 +52,7 @@ namespace renderframework { namespace nodes {
         // as part of the child class ;)
         virtual void doInit();
         virtual void doUpload();
-        virtual void doRender();
+        virtual void doRender(mat4x4 modelMat, mat4x4 viewMat, mat4x4 projMat);
     private:
         vec3 mScale = vec3(1.0);
         vec3 mRot = vec3(0.0);

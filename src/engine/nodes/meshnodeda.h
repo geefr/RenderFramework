@@ -27,7 +27,7 @@ namespace renderframework { namespace nodes {
         // Render this node and any children
         void doInit() final override;
         void doUpload() final override;
-        void doRender() final override;
+        void doRender(mat4x4 modelMat, mat4x4 viewMat, mat4x4 projMat) final override;
     private:
         uint32_t mNumVerts = 0;
         Meshes mMeshes;
