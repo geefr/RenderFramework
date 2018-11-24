@@ -1,8 +1,6 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-//#include "vecmaths.h"
-
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>

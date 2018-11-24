@@ -27,4 +27,9 @@ namespace renderframework { namespace materials {
         shader.regUniform("material.specular");
         shader.regUniform("material.shininess");
     }
+
+    void PhongMaterialBare::registerUniforms( std::shared_ptr<ShaderProgram> shader ) { registerUniforms(*(shader.get())); }
+    void PhongMaterialBare::setUniforms( std::shared_ptr<ShaderProgram> shader ){ setUniforms(*(shader.get())); }
+
+
 } }

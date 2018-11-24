@@ -8,6 +8,11 @@ add_library( rf
  light.h
  light.cpp
 
+ nodes/node.h
+ nodes/node.cpp
+ nodes/meshnodeda.h
+ nodes/meshnodeda.cpp
+
  materials/material.h
  materials/material.cpp
  materials/phongmaterialbare.h

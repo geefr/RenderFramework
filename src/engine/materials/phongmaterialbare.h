@@ -12,8 +12,10 @@ namespace renderframework { namespace materials {
         PhongMaterialBare( vec3 ambient, vec3 diffuse, vec3 specular, float shininess );
         ~PhongMaterialBare() final override;
 
+        void registerUniforms( ShaderProgram& shader ) final override;
         void setUniforms( ShaderProgram& shader ) final override;
-        static void registerUniforms( ShaderProgram& shader );
+        void registerUniforms( std::shared_ptr<ShaderProgram> shader ) final override;
+        void setUniforms( std::shared_ptr<ShaderProgram> shader ) final override;
 
         // Reflectance values for each component
         vec3 mAmbient = {0.f,0.f,0.f};

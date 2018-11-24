@@ -11,6 +11,8 @@ namespace renderframework { namespace vector {
     public:
         Cube( vec3 center, vec3 dimensions );
         virtual ~Cube();
+
+        vec3 mCenter;
     };
 } }
 

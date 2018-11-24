@@ -13,6 +13,7 @@
 #include "common.h"
 #include "shaderprogram.h"
 #include "materials/phongmaterialbare.h"
+#include "nodes/meshnodeda.h"
 #include "light.h"
 
 namespace renderframework
@@ -41,28 +42,21 @@ namespace renderframework
 
         void checkGlError();
 
-        GLuint loadAndCompileShader( GLenum shaderType, std::string path );
-        GLuint linkShaders( const std::initializer_list<GLuint>& v );
+        //GLuint loadAndCompileShader( GLenum shaderType, std::string path );
+        //GLuint linkShaders( const std::initializer_list<GLuint>& v );
         GLuint loadTexture( std::string fileName );
-        GLuint createVertexBuffer( const std::vector<VertexDef>& data );
+        //GLuint createVertexBuffer( const std::vector<VertexDef>& data );
         void setVertexAttribPointers(GLint vertCoordAttrib, GLint texCoordAttrib, GLint vertColorAttrib);
         void printMat4x4(mat4x4 mat, std::string name);
 
         Light light;
-
-        ShaderProgram mShader;
-
         GLuint vao;
-
         GLuint catTexture;
-        GLuint vertexBuffer;
-        std::vector<VertexDef> vertexData;
 
+        std::map<std::string, std::shared_ptr<materials::PhongMaterialBare>> mMaterials;
+        std::map<std::string, std::shared_ptr<ShaderProgram>> mShaders;
 
-        std::map<std::string, materials::PhongMaterialBare> mMaterials;
-        materials::PhongMaterialBare mMaterial;
-
-        vector::Cube cube;
+        std::shared_ptr<nodes::MeshNodeDA> mNode;
     };
 }
 
