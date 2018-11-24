@@ -55,8 +55,14 @@ namespace renderframework
           std::vector<GLchar> log(static_cast<std::vector<GLchar>::size_type>(logLength));
           glGetProgramInfoLog(m_program, logLength, &logLength, &log[0]);
           glDeleteProgram(m_program);
-
-          throw std::runtime_error("Failed to link shader: " + std::string(reinterpret_cast<const char*>(&log[0])));
+          if( !log.empty() )
+          {
+            throw std::runtime_error("Failed to link shader: " + std::string(reinterpret_cast<const char*>(&log[0])));
+          }
+          else
+          {
+              throw std::runtime_error("Failed to link shader, unknown reason");
+          }
       }
 
       return m_program;

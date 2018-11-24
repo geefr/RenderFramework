@@ -24,43 +24,6 @@ namespace renderframework
       }
     }
 
-    Engine::Engine()
-    {
-        auto addMat = [&](std::string name, vec3 a, vec3 b, vec3 c, float d) {
-          mMaterials[name].reset( new materials::PhongMaterialBare(a,b,c,d) );
-        };
-
-        addMat("emerald",{	0.0215,	0.1745	,0.0215}, {	0.07568,	0.61424,	0.07568}, {	0.633,	0.727811,	0.633}, 	0.6 * 256.0);
-        addMat("jade",{	0.135,	0.2225,	0.1575}, {	0.54,	0.89,	0.63}, {	0.316228,	0.316228,	0.316228}, 	0.1);
-        addMat("obsidian",{	0.05375,	0.05	,0.06625}, {	0.18275	,0.17	,0.22525}, {	0.332741,	0.328634,	0.346435}, 	0.3 * 256.0);
-        addMat("pearl",{	0.25	,0.20725,	0.20725}, {	1	,0.829,	0.829}, {	0.296648,	0.296648	,0.296648}, 	0.088 * 256.0);
-        addMat("ruby",{	0.1745,	0.01175,	0.01175}, {	0.61424,	0.04136,	0.04136}, {	0.727811	,0.626959	,0.626959}, 	0.6 * 256.0);
-        addMat("turquoise",{	0.1	,0.18725,	0.1745}, {	0.396	,0.74151	,0.69102}, {	0.297254,	0.30829,	0.306678}, 	0.1 * 256.0);
-        addMat("brass",{	0.329412	,0.223529	,0.027451}, {	0.780392	,0.568627,	0.113725}, {	0.992157	,0.941176	,0.807843}, 	0.21794872 * 256.0);
-        addMat("bronze",{	0.2125,	0.1275,	0.054}, {	0.714,	0.4284,	0.18144}, {	0.393548,	0.271906	,0.166721}, 	0.2 * 256.0);
-        addMat("chrome",{	0.25,	0.25	,0.25}, {	0.4,	0.4,	0.4},{	0.774597, 	0.774597,	0.774597}, 	0.6 * 256.0);
-        addMat("copper",{	0.19125,	0.0735,	0.0225}, {	0.7038,	0.27048,	0.0828}, {	0.256777	,0.137622,0.086014}, 	0.1 * 256.0);
-        addMat("gold",{	0.24725,	0.1995	,0.0745}, {	0.75164	,0.60648	,0.22648}, {	0.628281,	0.555802	,0.366065}, 	0.4 * 256.0);
-        addMat("silver",{	0.19225,	0.19225	,0.19225}, {	0.50754	,0.50754	,0.50754}, {	0.508273,	0.508273	,0.508273}, 	0.4 * 256.0);
-        addMat("black plastic",{	0.0,	0.0	,0.0}, {	0.01	,0.01	,0.01}, {	0.50	,0.50	,0.50}, 	.25 * 256.0);
-        addMat("cyan plastic",{	0.0	,0.1	,0.06}, {	0.0	,0.50980392	,0.50980392}, {	0.50196078	,0.50196078	,0.50196078}, 	.25 * 256.0);
-        addMat("green plastic",{	0.0	,0.0	,0.0}, {	0.1	,0.35,	0.1}, {	0.45	,0.55,	0.45}, 	.25 * 256.0);
-        addMat("red plastic",{	0.0	,0.0,	0.0}, {	0.5,	0.0	,0.0}, {	0.7,	0.6	,0.6}, .25 * 256.0);
-        addMat("white plastic",{	0.0,	0.0,	0.0}, {	0.55,	0.55	,0.55}, {	0.70	,0.70	,0.70}, 	.25 * 256.0);
-        addMat("yellow plastic",{	0.0,	0.0,	0.0}, {	0.5,	0.5	,0.0}, {	0.60,	0.60,	0.50}, .25 * 256.0);
-        addMat("black rubber",{	0.02	,0.02	,0.02}, {	0.01	,0.01,	0.01}, {	0.4,	0.4,	0.4}, 	.078125 * 256.0);
-        addMat("cyan rubber",{	0.0	,0.05,	0.05}, {	0.4,	0.5	,0.5}, {	0.04,	0.7	,0.7}, 	.078125 * 256.0);
-        addMat("green rubber",{	0.0	,0.05	,0.0}, {	0.4,	0.5	,0.4}, {	0.04,	0.7	,0.04}, .078125 * 256.0);
-        addMat("red rubber",{	0.05	,0.0	,0.0}, {	0.5,	0.4,	0.4}, {	0.7	,0.04	,0.04}, .078125 * 256.0);
-        addMat("white rubber",{	0.05	,0.05	,0.05}, {	0.5	,0.5	,0.5}, {	0.7,	0.7,	0.7}, .078125 * 256.0);
-        addMat("yellow rubber",{	0.05,	0.05	,0.0}, {	0.5	,0.5	,0.4}, {	0.7,	0.7,	0.04}, .078125 * 256.0);
-
-        light.mAmbient = {.2f,.2f,.2f};
-        light.mDiffuse = {.6f,.6f,.6f};
-        light.mSpecular = {.8f,.8f,.8f};
-        light.mPosition = {1.f,0.f,1.f};
-    }
-
     //l/r/b/t
     [[noreturn]] void Engine::quit(std::string msg)
     {
@@ -136,13 +99,45 @@ namespace renderframework
         }
     }
 
+    Engine::Engine()
+    {
+        auto addMat = [&](std::string name, vec3 a, vec3 b, vec3 c, float d) {
+          mMaterials[name].reset( new materials::PhongMaterialBare(a,b,c,d) );
+        };
+
+        addMat("emerald",{	0.0215,	0.1745	,0.0215}, {	0.07568,	0.61424,	0.07568}, {	0.633,	0.727811,	0.633}, 	0.6 * 256.0);
+        addMat("jade",{	0.135,	0.2225,	0.1575}, {	0.54,	0.89,	0.63}, {	0.316228,	0.316228,	0.316228}, 	0.1);
+        addMat("obsidian",{	0.05375,	0.05	,0.06625}, {	0.18275	,0.17	,0.22525}, {	0.332741,	0.328634,	0.346435}, 	0.3 * 256.0);
+        addMat("pearl",{	0.25	,0.20725,	0.20725}, {	1	,0.829,	0.829}, {	0.296648,	0.296648	,0.296648}, 	0.088 * 256.0);
+        addMat("ruby",{	0.1745,	0.01175,	0.01175}, {	0.61424,	0.04136,	0.04136}, {	0.727811	,0.626959	,0.626959}, 	0.6 * 256.0);
+        addMat("turquoise",{	0.1	,0.18725,	0.1745}, {	0.396	,0.74151	,0.69102}, {	0.297254,	0.30829,	0.306678}, 	0.1 * 256.0);
+        addMat("brass",{	0.329412	,0.223529	,0.027451}, {	0.780392	,0.568627,	0.113725}, {	0.992157	,0.941176	,0.807843}, 	0.21794872 * 256.0);
+        addMat("bronze",{	0.2125,	0.1275,	0.054}, {	0.714,	0.4284,	0.18144}, {	0.393548,	0.271906	,0.166721}, 	0.2 * 256.0);
+        addMat("chrome",{	0.25,	0.25	,0.25}, {	0.4,	0.4,	0.4},{	0.774597, 	0.774597,	0.774597}, 	0.6 * 256.0);
+        addMat("copper",{	0.19125,	0.0735,	0.0225}, {	0.7038,	0.27048,	0.0828}, {	0.256777	,0.137622,0.086014}, 	0.1 * 256.0);
+        addMat("gold",{	0.24725,	0.1995	,0.0745}, {	0.75164	,0.60648	,0.22648}, {	0.628281,	0.555802	,0.366065}, 	0.4 * 256.0);
+        addMat("silver",{	0.19225,	0.19225	,0.19225}, {	0.50754	,0.50754	,0.50754}, {	0.508273,	0.508273	,0.508273}, 	0.4 * 256.0);
+        addMat("black plastic",{	0.0,	0.0	,0.0}, {	0.01	,0.01	,0.01}, {	0.50	,0.50	,0.50}, 	.25 * 256.0);
+        addMat("cyan plastic",{	0.0	,0.1	,0.06}, {	0.0	,0.50980392	,0.50980392}, {	0.50196078	,0.50196078	,0.50196078}, 	.25 * 256.0);
+        addMat("green plastic",{	0.0	,0.0	,0.0}, {	0.1	,0.35,	0.1}, {	0.45	,0.55,	0.45}, 	.25 * 256.0);
+        addMat("red plastic",{	0.0	,0.0,	0.0}, {	0.5,	0.0	,0.0}, {	0.7,	0.6	,0.6}, .25 * 256.0);
+        addMat("white plastic",{	0.0,	0.0,	0.0}, {	0.55,	0.55	,0.55}, {	0.70	,0.70	,0.70}, 	.25 * 256.0);
+        addMat("yellow plastic",{	0.0,	0.0,	0.0}, {	0.5,	0.5	,0.0}, {	0.60,	0.60,	0.50}, .25 * 256.0);
+        addMat("black rubber",{	0.02	,0.02	,0.02}, {	0.01	,0.01,	0.01}, {	0.4,	0.4,	0.4}, 	.078125 * 256.0);
+        addMat("cyan rubber",{	0.0	,0.05,	0.05}, {	0.4,	0.5	,0.5}, {	0.04,	0.7	,0.7}, 	.078125 * 256.0);
+        addMat("green rubber",{	0.0	,0.05	,0.0}, {	0.4,	0.5	,0.4}, {	0.04,	0.7	,0.04}, .078125 * 256.0);
+        addMat("red rubber",{	0.05	,0.0	,0.0}, {	0.5,	0.4,	0.4}, {	0.7	,0.04	,0.04}, .078125 * 256.0);
+        addMat("white rubber",{	0.05	,0.05	,0.05}, {	0.5	,0.5	,0.5}, {	0.7,	0.7,	0.7}, .078125 * 256.0);
+        addMat("yellow rubber",{	0.05,	0.05	,0.0}, {	0.5	,0.5	,0.4}, {	0.7,	0.7,	0.04}, .078125 * 256.0);
+
+        light.mAmbient = {.2f,.2f,.2f};
+        light.mDiffuse = {.6f,.6f,.6f};
+        light.mSpecular = {.8f,.8f,.8f};
+        light.mPosition = {1.f,0.f,1.f};
+    }
+
     void Engine::init()
     {
-        // TODO: Pretty much a hack right now ;)
-        auto dataEnv = std::getenv("RENDERFRAMEWORK_ROOT");
-        if( !dataEnv ) quit ("Failed to read root dir, is RENDERFRAMEWORK_ROOT set?");
-        std::string dataDir = std::string(dataEnv) + "/";
-
         glEnable(GL_DEBUG_OUTPUT);
         glDebugMessageCallback(GLErrorCallback, nullptr);
 
@@ -157,7 +152,11 @@ namespace renderframework
         glGenVertexArrays(1, &vao);
         glBindVertexArray(vao);
 
-        ////////////////////////////////////////////////////////////
+        // TODO: Pretty much a hack right now ;)
+        auto dataEnv = std::getenv("RENDERFRAMEWORK_ROOT");
+        if( !dataEnv ) quit ("Failed to read root dir, is RENDERFRAMEWORK_ROOT set?");
+        std::string dataDir = std::string(dataEnv) + "/";
+
         // Let's load some shaders
         std::shared_ptr<ShaderProgram> phong(new ShaderProgram());
         phong->addShader(GL_VERTEX_SHADER, dataDir + "shaders/vertex/default.vert");
@@ -165,42 +164,6 @@ namespace renderframework
         phong->addShader(GL_TESS_CONTROL_SHADER, dataDir + "shaders/tesselation/3vertpatch.tesscont");
         phong->addShader(GL_TESS_EVALUATION_SHADER, dataDir + "shaders/tesselation/3vertpatch.tesseval");
         mShaders["phong"] = phong;
-
-        // Generate the vertex data and such
-        mNode.reset(new nodes::Node());
-
-        {
-            std::shared_ptr<nodes::MeshNodeDA> cubeNode(new nodes::MeshNodeDA());
-            cubeNode->meshes().emplace_back(new vector::Cube({2.f,.0f,-2.f}, {2.0f, 2.0f, 2.0f}));
-            cubeNode->meshes().emplace_back(new vector::Cube({-2.f,.0f,-2.f}, {2.0f, 2.0f, 2.0f}));
-            cubeNode->meshes().emplace_back(new vector::Cube({2.f,.0f,2.f}, {2.0f, 2.0f, 2.0f}));
-            cubeNode->meshes().emplace_back(new vector::Cube({-2.f,.0f,2.f}, {2.0f, 2.0f, 2.0f}));
-            cubeNode->shader() = phong;
-            cubeNode->material() = mMaterials["silver"];
-            cubeNode->translation() = vec3(0.f,2.f,0.f);
-            cubeNode->rotation() = vec3(.1f,.1f,.1f);
-            cubeNode->scale() = vec3(.7f,.7f,.7f);
-            mNode->children().push_back(cubeNode);
-        }
-
-        {
-            std::shared_ptr<nodes::MeshNodeDA> cubeNode(new nodes::MeshNodeDA());
-            cubeNode->meshes().emplace_back(new vector::Cube({2.f,.0f,-2.f}, {2.0f, 2.0f, 2.0f}));
-            cubeNode->meshes().emplace_back(new vector::Cube({-2.f,.0f,-2.f}, {2.0f, 2.0f, 2.0f}));
-            cubeNode->meshes().emplace_back(new vector::Cube({2.f,.0f,2.f}, {2.0f, 2.0f, 2.0f}));
-            cubeNode->meshes().emplace_back(new vector::Cube({-2.f,.0f,2.f}, {2.0f, 2.0f, 2.0f}));
-            cubeNode->shader() = phong;
-            cubeNode->material() = mMaterials["gold"];
-            cubeNode->translation() = vec3(0.f,-2.f,0.f);
-            mNode->children().push_back(cubeNode);
-        }
-
-        mNode->translation() = vec3(0.f,0.f,-5.f);
-
-        mNode->init();
-        mNode->upload();
-
-        ////////////////////////////////////////////////////////////
 
         // Link the shader
         phong->id();
@@ -219,13 +182,15 @@ namespace renderframework
         phong->regUniform("eyePos");
     }
 
+    void Engine::init2()
+    {
+        mNode->init();
+        mNode->upload();
+    }
+
     void Engine::loop( float width, float height )
     {
-        viewRot[0] += viewRotDelta[0];
-        viewRot[1] += viewRotDelta[1];
-        viewRot[2] += viewRotDelta[2];
-
-        // Hack, should use framebuffersizecallback ;)
+        // TODO: Hack, should use framebuffersizecallback ;)
         glViewport(0,0,width,height);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -233,8 +198,6 @@ namespace renderframework
         mat4x4 m(1.f);
         mat4x4 v(1.f);
         mat4x4 p(1.f);
-
-        mNode->rotation() = viewRot;
 
         // eye, center, up
         vec3 eyePos(0.f,0.f,1.0f);

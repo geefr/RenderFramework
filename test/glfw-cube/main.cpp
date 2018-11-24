@@ -2,11 +2,11 @@
 #include <GLFW/glfw3.h>
 
 #include "engine/engine.h"
+#include "dataformats/vector/primitives/cube.h"
 
 using namespace renderframework;
 Engine engine;
-
-using namespace std;
+vec3 viewRotDelta{ 0.01f, 0.015f, 0.02f };
 
 [[noreturn]] void quit(std::string msg)
 {
@@ -44,16 +44,16 @@ void keyCallback(GLFWwindow* window, int key, [[maybe_unused]] int scancode, int
                 glfwSetWindowShouldClose(window, GLFW_TRUE);
                 break;
             case GLFW_KEY_1:
-                engine.viewRotDelta[0] = M_PI / 360.0f;
+                viewRotDelta[0] = M_PI / 360.0f;
                 break;
             case GLFW_KEY_2:
-                engine.viewRotDelta[0] = -M_PI / 360.0f;
+                viewRotDelta[0] = -M_PI / 360.0f;
                 break;
             case GLFW_KEY_3:
-                engine.viewRotDelta[2] = M_PI / 360.0f;
+                viewRotDelta[2] = M_PI / 360.0f;
                 break;
             case GLFW_KEY_4:
-                engine.viewRotDelta[2] = -M_PI / 360.0f;
+                viewRotDelta[2] = -M_PI / 360.0f;
                 break;
         }
     }
@@ -63,11 +63,11 @@ void keyCallback(GLFWwindow* window, int key, [[maybe_unused]] int scancode, int
         {
             case GLFW_KEY_1:
             case GLFW_KEY_2:
-                engine.viewRotDelta[0] = 0.0f;
+                viewRotDelta[0] = 0.0f;
                 break;
             case GLFW_KEY_3:
             case GLFW_KEY_4:
-                engine.viewRotDelta[2] = 0.0f;
+                viewRotDelta[2] = 0.0f;
                 break;
         }
     }
@@ -97,20 +97,6 @@ void mouseButtonCallback(GLFWwindow* window, int button, int action,[[maybe_unus
 
 void scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 {
-    /*
-    double cx, cy;
-    glfwGetCursorPos(window, &cx, &cy);
-
-    float x = static_cast<float>(cx) / windowSize[0];
-    float y = static_cast<float>(cy) / windowSize[1];
-
-    x = viewExtent[0] + (x * (viewExtent[1] - viewExtent[0]));
-    y = viewExtent[2] + (y * (viewExtent[3] - viewExtent[2]));
-
-    viewCenter[0] += x;
-    viewCenter[1] += y;
-    */
-
     yoffset *= -1.0f;
     if( yoffset < 0.0 ) yoffset = 1.0 - (-yoffset / 20.0);
     else yoffset = 1.0 + (yoffset / 20.0);
@@ -144,10 +130,44 @@ try
 
     engine.init();
 
+    // Generate the vertex data and such
+    engine.mNode.reset(new nodes::Node());
+    {
+        std::shared_ptr<nodes::MeshNodeDA> cubeNode(new nodes::MeshNodeDA());
+        cubeNode->meshes().emplace_back(new vector::Cube({2.f,.0f,-2.f}, {2.0f, 2.0f, 2.0f}));
+        cubeNode->meshes().emplace_back(new vector::Cube({-2.f,.0f,-2.f}, {2.0f, 2.0f, 2.0f}));
+        cubeNode->meshes().emplace_back(new vector::Cube({2.f,.0f,2.f}, {2.0f, 2.0f, 2.0f}));
+        cubeNode->meshes().emplace_back(new vector::Cube({-2.f,.0f,2.f}, {2.0f, 2.0f, 2.0f}));
+        cubeNode->shader() = engine.mShaders["phong"];
+        cubeNode->material() = engine.mMaterials["silver"];
+        cubeNode->translation() = vec3(0.f,2.f,0.f);
+        cubeNode->rotation() = vec3(.1f,.1f,.1f);
+        cubeNode->scale() = vec3(.7f,.7f,.7f);
+        engine.mNode->children().push_back(cubeNode);
+    }
+
+    {
+        std::shared_ptr<nodes::MeshNodeDA> cubeNode(new nodes::MeshNodeDA());
+        cubeNode->meshes().emplace_back(new vector::Cube({2.f,.0f,-2.f}, {2.0f, 2.0f, 2.0f}));
+        cubeNode->meshes().emplace_back(new vector::Cube({-2.f,.0f,-2.f}, {2.0f, 2.0f, 2.0f}));
+        cubeNode->meshes().emplace_back(new vector::Cube({2.f,.0f,2.f}, {2.0f, 2.0f, 2.0f}));
+        cubeNode->meshes().emplace_back(new vector::Cube({-2.f,.0f,2.f}, {2.0f, 2.0f, 2.0f}));
+        cubeNode->shader() = engine.mShaders["phong"];
+        cubeNode->material() = engine.mMaterials["gold"];
+        cubeNode->translation() = vec3(0.f,-2.f,0.f);
+        engine.mNode->children().push_back(cubeNode);
+    }
+    engine.mNode->translation() = vec3(0.f,0.f,-5.f);
+
+    engine.init2();
+
     while(!glfwWindowShouldClose(window))
     {
         // Pet the event doggie so it barks at our callbacks
         glfwPollEvents();
+
+        engine.viewRot += viewRotDelta;
+        engine.mNode->rotation() = engine.viewRot;
 
         // Hack, should use framebuffersizecallback ;)
         auto width = 0;
