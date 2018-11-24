@@ -28,13 +28,10 @@ namespace renderframework
 
         [[noreturn]] static void quit(std::string msg);
 
-        vec4 viewExtent{ -1.0f, 1.0f, -1.0f, 1.0f };
-
         vec2 viewCenter{ 0.0f, 0.0f };
         vec2 cursorPos{ 0.0f, 0.0f };
         vec2 windowSize{ 800.0f, 600.0f };
         vec3 viewRot{ 0.0f, 0.0f, 0.0f };
-
 
         std::map<std::string, std::shared_ptr<materials::PhongMaterialBare>> mMaterials;
         std::map<std::string, std::shared_ptr<ShaderProgram>> mShaders;

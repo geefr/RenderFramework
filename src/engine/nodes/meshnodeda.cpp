@@ -5,6 +5,7 @@
 
 #include <vector>
 #include <stdexcept>
+#include <algorithm>
 
 using namespace renderframework;
 
@@ -81,19 +82,25 @@ namespace renderframework { namespace nodes {
         mShader->regUniform("projectionMatrix");
     }
 
-    void MeshNodeDA::doRender(mat4x4 modelMat, mat4x4 viewMat, mat4x4 projMat)
+    void MeshNodeDA::doRender(mat4x4 nodeMat, mat4x4 viewMat, mat4x4 projMat)
     {
         glUseProgram(mShader->id());
         // TODO: Matrix uniforms and stuff
         mMaterial->setUniforms(mShader);
         // TODO: Lighting? How's that going to work?
-
-        mat4x4 mvp = modelMat;
+/*
+        mat4x4 m(1.0f);
+        std::for_each(std::rbegin(nodeMats), std::rend(nodeMats), [&](mat4x4 nodeMat) {
+            m = m * nodeMat;
+        });*/
+        mat4x4 mvp(1.0f);
+        mvp *= nodeMat;
+        //mvp *= m;
         mvp *= viewMat;
         mvp *= projMat;
 
         glUniformMatrix4fv(mShader->uniform("modelViewProjectionMatrix"), 1, GL_FALSE, value_ptr(mvp));
-        glUniformMatrix4fv(mShader->uniform("modelMatrix"), 1, GL_FALSE, value_ptr(modelMat));
+        glUniformMatrix4fv(mShader->uniform("modelMatrix"), 1, GL_FALSE, value_ptr(nodeMat));
         glUniformMatrix4fv(mShader->uniform("viewMatrix"), 1, GL_FALSE, value_ptr(viewMat));
         glUniformMatrix4fv(mShader->uniform("projectionMatrix"), 1, GL_FALSE, value_ptr(projMat));
 

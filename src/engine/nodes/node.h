@@ -22,13 +22,19 @@ namespace renderframework { namespace nodes {
         Node();
         virtual ~Node();
 
-        // Child accessors
+        // Child accessorss
         Children& children();
 
         // Node transformations
         vec3& scale();
         vec3& rotation();
         vec3& translation();
+
+        // Node transformation deltas
+        // Will be applied each time render is called
+        vec3& scaleDelta();
+        vec3& rotationDelta();
+        vec3& translationDelta();
 
         // Recalculates every time it's called
         mat4x4 matrix() const;
@@ -42,7 +48,8 @@ namespace renderframework { namespace nodes {
         // to allow buffer contents/textures etc to change
         void upload();
         // Render this node and any children
-        void render(mat4x4 modelMat, mat4x4 viewMat, mat4x4 projMat);
+        void render(mat4x4 viewMat, mat4x4 projMat);
+        void render(mat4x4 nodeMat, mat4x4 viewMat, mat4x4 projMat);
     protected:
         // Children need to implement these
         // Will be called by the public versions of these
@@ -52,11 +59,16 @@ namespace renderframework { namespace nodes {
         // as part of the child class ;)
         virtual void doInit();
         virtual void doUpload();
-        virtual void doRender(mat4x4 modelMat, mat4x4 viewMat, mat4x4 projMat);
+        virtual void doRender(mat4x4 nodeMat, mat4x4 viewMat, mat4x4 projMat);
+
     private:
         vec3 mScale = vec3(1.0);
         vec3 mRot = vec3(0.0);
         vec3 mTrans = vec3(0.0);
+
+        vec3 mScaleDelta = vec3(1.0);
+        vec3 mRotDelta = vec3(0.0);
+        vec3 mTransDelta = vec3(0.0);
 
         Children mChildren;
     };

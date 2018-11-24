@@ -200,8 +200,11 @@ namespace renderframework
         mat4x4 p(1.f);
 
         // eye, center, up
-        vec3 eyePos(0.f,0.f,1.0f);
+        vec3 eyePos(0.f,0.f,5.0f);
         v = lookAt(eyePos,vec3(0.f,0.f,0.f),vec3(0.f,1.f,0.f));
+
+        //vec3 eyePos(0.f,5.f,0.0f);
+        //v = lookAt(eyePos,vec3(0.f,0.f,0.f),vec3(0.f,0.0f,-1.f));
 
         // fov, aspect, near plane distance, far plane distance
         p = perspective(90.f, width / height, 0.1f, 10.0f );
@@ -220,6 +223,6 @@ namespace renderframework
 
         light.setUniforms(*(shader.get()));
 
-        mNode->render(m, v, p);
+        mNode->render(v, p);
     }
 }

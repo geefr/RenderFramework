@@ -15,6 +15,10 @@ namespace renderframework { namespace nodes {
     vec3& Node::rotation() { return mRot; }
     vec3& Node::translation() { return mTrans; }
 
+    vec3& Node::scaleDelta() { return mScaleDelta; }
+    vec3& Node::rotationDelta() { return mRotDelta; }
+    vec3& Node::translationDelta() { return mTransDelta; }
+
     mat4x4 Node::matrix() const
     {
         mat4x4 m(1.0);
@@ -38,27 +42,36 @@ namespace renderframework { namespace nodes {
         for( auto& c: mChildren ) c->upload();
     }
 
-    void Node::render(mat4x4 modelMat, mat4x4 viewMat, mat4x4 projMat)
+    void Node::render(mat4x4 viewMat, mat4x4 projMat)
     {
-        // This node's transformation matrix
-        //mat4x4 nodeMat(1.0f);
-        modelMat = glm::translate(modelMat, mTrans);
-        modelMat = glm::rotate(modelMat, mRot.x, vec3(1.f,0.f,0.f));
-        modelMat = glm::rotate(modelMat, mRot.y, vec3(0.f,1.f,0.f));
-        modelMat = glm::rotate(modelMat, mRot.z, vec3(0.f,0.f,1.f));
-        modelMat = glm::scale(modelMat, mScale);
+        mat4x4 nodeMat(1.0f);
+        render(nodeMat, viewMat, projMat);
+    }
 
+    void Node::render(mat4x4 nodeMat, mat4x4 viewMat, mat4x4 projMat)
+    {
+        // Update if our transform is changing over time for some reason
+        mTrans += mTransDelta;
+        mRot += mRotDelta;
+        mScale *= mScaleDelta;
 
+        // Apply this node's transformation matrix
+        mat4x4 m(1.0f);
+        m = glm::scale(m, mScale);
 
-        // Apply any previous transforms
-        // TODO: This should work? We don't need to now traverse up to the root node and apply them in that order? Matrices are hard :/
-        // nodeMat *= modelMat;
+        m = glm::rotate(m, mRot.x, vec3(1.f,0.f,0.f));
+        m = glm::rotate(m, mRot.y, vec3(0.f,1.f,0.f));
+        m = glm::rotate(m, mRot.z, vec3(0.f,0.f,1.f));
+        m = glm::translate(m, mTrans);
 
-        doRender(modelMat, viewMat, projMat);
-        for( auto& c: mChildren ) c->render(modelMat, viewMat, projMat);
+        nodeMat = nodeMat * m;
+
+        doRender(nodeMat, viewMat, projMat);
+        for( auto& c: mChildren ) c->render(nodeMat, viewMat, projMat);
+        //nodeMats.pop_back();
     }
 
     void Node::doInit() {}
     void Node::doUpload() {}
-    void Node::doRender(mat4x4 modelMat, mat4x4 viewMat, mat4x4 projMat) {}
+    void Node::doRender(mat4x4 nodeMat, mat4x4 viewMat, mat4x4 projMat) {}
 } }
