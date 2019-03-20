@@ -14,6 +14,11 @@ if( NOT CMAKE_BUILD_TYPE )
   set_property( CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Release" "Debug" "MinSizeRel" "RelWithDebInfo" )
 endif()
 
+if( NOT LIBTYPE )
+    set( LIBTYPE SHARED CACHE STRING "The type of libraries to build" FORCE )
+    set_property( CACHE LIBTYPE PROPERTY STRINGS "SHARED" "STATIC" )
+endif()
+
 option( ENABLE_TEST "Enable tests" ON )
 option( ENABLE_THIRDPARTY "Enable third party components" ON )
 option( RASTER_PNG "PNG Support via libPNG" ON )

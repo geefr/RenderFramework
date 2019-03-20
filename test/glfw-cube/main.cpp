@@ -79,7 +79,7 @@ void mouseButtonCallback(GLFWwindow* window, int button, int action,[[maybe_unus
 
     double cx, cy;
     glfwGetCursorPos(window, &cx, &cy);
-
+/*
     float x = static_cast<float>(cx) / engine.windowSize[0];
     float y = static_cast<float>(cy) / engine.windowSize[1];
 
@@ -93,6 +93,7 @@ void mouseButtonCallback(GLFWwindow* window, int button, int action,[[maybe_unus
             engine.viewCenter[1] += y;
             break;
     }
+*/
 }
 
 void scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
@@ -101,12 +102,12 @@ void scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
     if( yoffset < 0.0 ) yoffset = 1.0 - (-yoffset / 20.0);
     else yoffset = 1.0 + (yoffset / 20.0);
 
+    /*
     engine.viewExtent[0] *= static_cast<float>(yoffset);
     engine.viewExtent[1] *= static_cast<float>(yoffset);
     engine.viewExtent[2] *= static_cast<float>(yoffset);
     engine.viewExtent[3] *= static_cast<float>(yoffset);
-
-    std::cout << "Scroll: " << engine.viewExtent[0] << "," << engine.viewExtent[1] << "," << engine.viewExtent[2] << "," << engine.viewExtent[3] << std::endl;
+    */
 }
 
 int main()
@@ -139,25 +140,31 @@ try
         cubeNode->meshes().emplace_back(new vector::Cube({2.f,.0f,2.f}, {2.0f, 2.0f, 2.0f}));
         cubeNode->meshes().emplace_back(new vector::Cube({-2.f,.0f,2.f}, {2.0f, 2.0f, 2.0f}));
         cubeNode->shader() = engine.mShaders["phong"];
-        cubeNode->material() = engine.mMaterials["silver"];
+        cubeNode->material() = engine.mMaterials["yellow rubber"];
         cubeNode->translation() = vec3(0.f,2.f,0.f);
         cubeNode->rotation() = vec3(.1f,.1f,.1f);
         cubeNode->scale() = vec3(.7f,.7f,.7f);
+        cubeNode->rotationDelta() = vec3(0.0f, 0.02f, 0.0f);
         engine.mNode->children().push_back(cubeNode);
     }
 
+    std::shared_ptr<nodes::MeshNodeDA> cubeNode(new nodes::MeshNodeDA());
+    cubeNode->scaleDelta() = {1.2f,1.2f,1.2f};
+
     {
-        std::shared_ptr<nodes::MeshNodeDA> cubeNode(new nodes::MeshNodeDA());
         cubeNode->meshes().emplace_back(new vector::Cube({2.f,.0f,-2.f}, {2.0f, 2.0f, 2.0f}));
         cubeNode->meshes().emplace_back(new vector::Cube({-2.f,.0f,-2.f}, {2.0f, 2.0f, 2.0f}));
         cubeNode->meshes().emplace_back(new vector::Cube({2.f,.0f,2.f}, {2.0f, 2.0f, 2.0f}));
         cubeNode->meshes().emplace_back(new vector::Cube({-2.f,.0f,2.f}, {2.0f, 2.0f, 2.0f}));
         cubeNode->shader() = engine.mShaders["phong"];
-        cubeNode->material() = engine.mMaterials["gold"];
+        cubeNode->material() = engine.mMaterials["ruby"];
         cubeNode->translation() = vec3(0.f,-2.f,0.f);
+        cubeNode->rotationDelta() = vec3(0.0f, -0.01f, 0.0f);
         engine.mNode->children().push_back(cubeNode);
     }
-    engine.mNode->translation() = vec3(0.f,0.f,-5.f);
+    //engine.mNode->translation() = vec3(0.f,0.f,-5.f);
+engine.mNode->scaleDelta() = {0.99f,0.99f,0.99f};
+//engine.mNode->scale() = {0.2f,0.2f,0.2f};
 
     engine.init2();
 
@@ -166,8 +173,29 @@ try
         // Pet the event doggie so it barks at our callbacks
         glfwPollEvents();
 
-        engine.viewRot += viewRotDelta;
-        engine.mNode->rotation() = engine.viewRot;
+        std::cerr << "scale: " << engine.mNode->scale().x;
+        if( engine.mNode->scale().x > 0.8f )
+        {
+            engine.mNode->scaleDelta() = {0.98f,0.98f,0.98f};
+        }
+        else if( engine.mNode->scale().x < 0.001f )
+        {
+            engine.mNode->scaleDelta() = {1.02f,1.02f,1.02f};
+        }
+
+        std::cerr << "cubeNode scale: " << engine.mNode->scale().x;
+        if( cubeNode->scale().x > 0.8f )
+        {
+            cubeNode->scaleDelta() = {0.9f,0.9f,0.9f};
+        }
+        else if( cubeNode->scale().x < 0.001f )
+        {
+            cubeNode->scaleDelta() = {1.1f,1.1f,1.1f};
+        }
+
+
+
+        engine.mNode->rotationDelta() = viewRotDelta;
 
         // Hack, should use framebuffersizecallback ;)
         auto width = 0;

@@ -1,6 +1,8 @@
 
 function( addShader SHADER )
     target_sources( rf PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/${SHADER} )
+
+    install( FILES ${CMAKE_CURRENT_SOURCE_DIR}/${SHADER} DESTINATION include/RenderFramework/shaders )
 endfunction()
 
 addShader(vertex/default.vert)
