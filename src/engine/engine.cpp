@@ -206,8 +206,20 @@ namespace renderframework
         //vec3 eyePos(0.f,5.f,0.0f);
         //v = lookAt(eyePos,vec3(0.f,0.f,0.f),vec3(0.f,0.0f,-1.f));
 
-        // fov, aspect, near plane distance, far plane distance
-        p = perspective(90.f, width / height, 0.1f, 10.0f );
+        if( mOrthogonal )
+        {
+          p = ortho(mOrthoSpace[0],
+                    mOrthoSpace[1],
+                    mOrthoSpace[2],
+                    mOrthoSpace[3],
+                    0.1f,
+                    10.0f);
+        }
+        else
+        {
+          // fov, aspect, near plane distance, far plane distance
+          p = perspective(90.f, width / height, 0.1f, 10.0f );
+        }
 
         auto shader = mShaders["phong"];
 

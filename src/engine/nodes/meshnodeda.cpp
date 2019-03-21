@@ -88,14 +88,8 @@ namespace renderframework { namespace nodes {
         // TODO: Matrix uniforms and stuff
         mMaterial->setUniforms(mShader);
         // TODO: Lighting? How's that going to work?
-/*
-        mat4x4 m(1.0f);
-        std::for_each(std::rbegin(nodeMats), std::rend(nodeMats), [&](mat4x4 nodeMat) {
-            m = m * nodeMat;
-        });*/
         mat4x4 mvp(1.0f);
         mvp *= nodeMat;
-        //mvp *= m;
         mvp *= viewMat;
         mvp *= projMat;
 

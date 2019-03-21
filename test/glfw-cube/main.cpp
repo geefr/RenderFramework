@@ -119,7 +119,7 @@ try
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
-    auto window = glfwCreateWindow(static_cast<int>(engine.windowSize[0]), static_cast<int>(engine.windowSize[1]), "Render Engine OpenGL Test", nullptr, nullptr);
+    auto window = glfwCreateWindow(800, 600, "Render Engine OpenGL Test", nullptr, nullptr);
     if( !window ) quit("Failed to init window");
 
     glfwMakeContextCurrent(window);

@@ -9,7 +9,6 @@ namespace renderframework { namespace nodes {
     {
     }
 
-
     Node::Children& Node::children() { return mChildren; }
     vec3& Node::scale() { return mScale; }
     vec3& Node::rotation() { return mRot; }
@@ -22,11 +21,15 @@ namespace renderframework { namespace nodes {
     mat4x4 Node::matrix() const
     {
         mat4x4 m(1.0);
-        m = glm::scale(m, mScale);
+
+        m = glm::translate(m, mTrans);
+
         m = rotate(m, mRot[0], vec3(1.f,0.f,0.f));
         m = rotate(m, mRot[1], vec3(0.f,1.f,0.f));
         m = rotate(m, mRot[2], vec3(0.f,0.f,1.f));
-        m = glm::translate(m, mTrans);
+
+        m = glm::scale(m, mScale);
+
         return m;
     }
 
@@ -56,19 +59,10 @@ namespace renderframework { namespace nodes {
         mScale *= mScaleDelta;
 
         // Apply this node's transformation matrix
-        mat4x4 m(1.0f);
-        m = glm::scale(m, mScale);
-
-        m = glm::rotate(m, mRot.x, vec3(1.f,0.f,0.f));
-        m = glm::rotate(m, mRot.y, vec3(0.f,1.f,0.f));
-        m = glm::rotate(m, mRot.z, vec3(0.f,0.f,1.f));
-        m = glm::translate(m, mTrans);
-
-        nodeMat = nodeMat * m;
+        nodeMat = nodeMat * matrix();
 
         doRender(nodeMat, viewMat, projMat);
         for( auto& c: mChildren ) c->render(nodeMat, viewMat, projMat);
-        //nodeMats.pop_back();
     }
 
     void Node::doInit() {}

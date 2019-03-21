@@ -28,15 +28,16 @@ namespace renderframework
 
         [[noreturn]] static void quit(std::string msg);
 
-        vec2 viewCenter{ 0.0f, 0.0f };
-        vec2 cursorPos{ 0.0f, 0.0f };
-        vec2 windowSize{ 800.0f, 600.0f };
-        vec3 viewRot{ 0.0f, 0.0f, 0.0f };
-
         std::map<std::string, std::shared_ptr<materials::PhongMaterialBare>> mMaterials;
         std::map<std::string, std::shared_ptr<ShaderProgram>> mShaders;
         std::shared_ptr<nodes::Node> mNode;
         Light light;
+
+        // TODO: A total hack
+        // right now it's ortho if true
+        // 90 fov otherwise
+        bool mOrthogonal = false;
+        vec4 mOrthoSpace = {-10.f,10.f,-10.f,10.f};
 
     private:
         void checkGlError();
