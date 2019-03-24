@@ -25,12 +25,13 @@ namespace renderframework { namespace nodes {
         std::shared_ptr<materials::Material>& material();
 
         // Render this node and any children
-        void doInit() final override;
-        void doUpload() final override;
-        void doRender(mat4x4 nodeMat, mat4x4 viewMat, mat4x4 projMat) final override;
+        void doInit() override;
+        void doUpload() override;
+        void doRender(mat4x4 nodeMat, mat4x4 viewMat, mat4x4 projMat) override;
     private:
         uint32_t mNumVerts = 0;
         Meshes mMeshes;
+        GLuint mVAO = 0;
         GLuint mVBO = 0;
         std::shared_ptr<ShaderProgram> mShader;
         std::shared_ptr<materials::Material> mMaterial;

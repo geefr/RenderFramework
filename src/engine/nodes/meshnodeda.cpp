@@ -19,6 +19,7 @@ namespace renderframework { namespace nodes {
     {
         // This of course assumes the context is current so...
         glDeleteBuffers(1,&mVBO);
+        glDeleteVertexArrays(1,&mVAO);
     }
 
     MeshNodeDA::Meshes& MeshNodeDA::meshes() { return mMeshes; }
@@ -27,6 +28,8 @@ namespace renderframework { namespace nodes {
 
     void MeshNodeDA::doInit()
     {
+        glGenVertexArrays(1, &mVAO);
+        glBindVertexArray(mVAO);
         glGenBuffers(1, &mVBO);
         if( !mShader ) throw std::runtime_error("Unable to init mesh node without shader");
         if( !mMaterial ) throw std::runtime_error("Unable to init mesh node without material");
@@ -45,23 +48,16 @@ namespace renderframework { namespace nodes {
             auto colors = mesh->vertexColors(); // TODO: Per-vertex colours ignored in shaders right now
             auto normals = mesh->normals();
 
-            for( auto& v: vertices )
-            {
-                meshBuf.push_back({v, {}, {}});
-            }
-            for( auto i=0u;i < colors.size(); ++i )
-            {
-                meshBuf[i].color = colors[i];
-            }
-            for( auto i=0u;i < normals.size(); ++i )
-            {
-                meshBuf[i].normal = normals[i];
-            }
+            for( auto& v: vertices ) { meshBuf.push_back({v, {}, {}}); }
+            for( auto i=0u;i < colors.size(); ++i ) { meshBuf[i].color = colors[i]; }
+            for( auto i=0u;i < normals.size(); ++i ) { meshBuf[i].normal = normals[i]; }
             buffer.insert(std::end(buffer), std::begin(meshBuf), std::end(meshBuf));
         }
         mNumVerts = buffer.size();
 
         // Buffer upload
+
+        glBindVertexArray(mVAO);
         glBindBuffer(GL_ARRAY_BUFFER, mVBO);
         glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(buffer.size() * sizeof(VertexDef)), buffer.data(), GL_STATIC_DRAW );
 
@@ -84,6 +80,8 @@ namespace renderframework { namespace nodes {
 
     void MeshNodeDA::doRender(mat4x4 nodeMat, mat4x4 viewMat, mat4x4 projMat)
     {
+        glBindVertexArray(mVAO);
+
         glUseProgram(mShader->id());
         // TODO: Matrix uniforms and stuff
         mMaterial->setUniforms(mShader);

@@ -38,6 +38,8 @@ namespace renderframework
         m_shaders.push_back( {shaderType, shaderSource, shader} );
     }
 
+    void ShaderProgram::init() const { id(); }
+
     GLuint ShaderProgram::id() const
     {
       if( m_program ) return m_program;

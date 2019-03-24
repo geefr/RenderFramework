@@ -38,6 +38,9 @@ namespace renderframework
 
         void addShader( GLenum shaderType, std::string shaderFileName );
 
+        /// Compile/link the shader
+        void init() const;
+
         /// Compile/link if needed, and return the shader program
         GLuint id() const;
 

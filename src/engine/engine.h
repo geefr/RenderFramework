@@ -28,6 +28,14 @@ namespace renderframework
 
         [[noreturn]] static void quit(std::string msg);
 
+        // Engine options
+
+        /// Enable/Disable alpha blending
+        /// Default enabled, src alpha/1 - src alpha
+        /// TODO: Allow different blend functions here, but we probably won't ever use them
+        void alphaBlending(bool enable);
+
+        // Rendering stuff and hacks below here
         std::map<std::string, std::shared_ptr<materials::PhongMaterialBare>> mMaterials;
         std::map<std::string, std::shared_ptr<ShaderProgram>> mShaders;
         std::shared_ptr<nodes::Node> mNode;
@@ -39,6 +47,9 @@ namespace renderframework
         bool mOrthogonal = false;
         vec4 mOrthoSpace = {-10.f,10.f,-10.f,10.f};
 
+        /// The root directory for the engines data
+        /// If not set will be read from RENDERFRAMEWORK_ROOT environment variable
+        std::string mDataDir;
     private:
         void checkGlError();
         GLuint loadTexture( std::string fileName );
@@ -47,6 +58,8 @@ namespace renderframework
 
         GLuint vao;
         GLuint catTexture;
+
+        bool mEnableAlpha = true;
     };
 }
 

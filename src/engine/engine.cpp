@@ -143,6 +143,8 @@ namespace renderframework
 
         glEnable(GL_DEPTH_TEST);
 
+        alphaBlending(mEnableAlpha);
+
         glClearColor( 0.6f, 0.2f, 0.2f, 1.0f);
 
         ////////////////////////////////////////////////////////////
@@ -153,16 +155,19 @@ namespace renderframework
         glBindVertexArray(vao);
 
         // TODO: Pretty much a hack right now ;)
-        auto dataEnv = std::getenv("RENDERFRAMEWORK_ROOT");
-        if( !dataEnv ) quit ("Failed to read root dir, is RENDERFRAMEWORK_ROOT set?");
-        std::string dataDir = std::string(dataEnv) + "/";
+        if( mDataDir.empty() )
+        {
+          auto dataEnv = std::getenv("RENDERFRAMEWORK_ROOT");
+          if( !dataEnv ) quit ("Failed to read root dir. Either set RENDERFRAMEWORK_ROOT or engine.dataDir() = dir");
+          mDataDir = std::string(dataEnv) + "/";
+        }
 
         // Let's load some shaders
         std::shared_ptr<ShaderProgram> phong(new ShaderProgram());
-        phong->addShader(GL_VERTEX_SHADER, dataDir + "shaders/vertex/default.vert");
-        phong->addShader(GL_FRAGMENT_SHADER, dataDir + "shaders/fragment/phong.frag");
-        phong->addShader(GL_TESS_CONTROL_SHADER, dataDir + "shaders/tesselation/3vertpatch.tesscont");
-        phong->addShader(GL_TESS_EVALUATION_SHADER, dataDir + "shaders/tesselation/3vertpatch.tesseval");
+        phong->addShader(GL_VERTEX_SHADER, mDataDir + "shaders/vertex/default.vert");
+        phong->addShader(GL_FRAGMENT_SHADER, mDataDir + "shaders/fragment/phong.frag");
+        phong->addShader(GL_TESS_CONTROL_SHADER, mDataDir + "shaders/tesselation/3vertpatch.tesscont");
+        phong->addShader(GL_TESS_EVALUATION_SHADER, mDataDir + "shaders/tesselation/3vertpatch.tesseval");
         mShaders["phong"] = phong;
 
         // Link the shader
@@ -236,5 +241,19 @@ namespace renderframework
         light.setUniforms(*(shader.get()));
 
         mNode->render(v, p);
+    }
+
+    void Engine::alphaBlending(bool enable)
+    {
+        mEnableAlpha = enable;
+        if( mEnableAlpha )
+        {
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        }
+        else
+        {
+            glDisable(GL_BLEND);
+        }
     }
 }

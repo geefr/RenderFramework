@@ -33,6 +33,17 @@ namespace renderframework { namespace nodes {
         return m;
     }
 
+    vec3 Node::modelVecToWorldVec( vec3 v )
+    {
+        // Just dealing with a direction here
+        // so don't care about scale/translate
+        mat4x4 m(1.0);
+        m = rotate(m, mRot[0], - vec3(1.f,0.f,0.f));
+        m = rotate(m, mRot[1], - vec3(0.f,1.f,0.f));
+        m = rotate(m, mRot[2], - vec3(0.f,0.f,1.f));
+        return vec4(v, 1.0f) * m;
+    }
+
     void Node::init()
     {
         doInit();

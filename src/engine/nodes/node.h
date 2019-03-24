@@ -36,8 +36,14 @@ namespace renderframework { namespace nodes {
         vec3& rotationDelta();
         vec3& translationDelta();
 
+        // Model Matrix
         // Recalculates every time it's called
         mat4x4 matrix() const;
+
+        // Convert a vector in model space to world space
+        // typically used to work out which way 'forward' is
+        // for a model
+        vec3 modelVecToWorldVec( vec3 v );
 
         // Initialise this node and any children
         // All one-time initialisation should be put here
