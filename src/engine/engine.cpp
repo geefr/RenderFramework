@@ -144,8 +144,7 @@ namespace renderframework
         glEnable(GL_DEPTH_TEST);
 
         alphaBlending(mEnableAlpha);
-
-        glClearColor( 0.6f, 0.2f, 0.2f, 1.0f);
+        clearColor(mClearColor);
 
         ////////////////////////////////////////////////////////////
 
@@ -255,5 +254,11 @@ namespace renderframework
         {
             glDisable(GL_BLEND);
         }
+    }
+
+    void Engine::clearColor(vec4 c)
+    {
+        mClearColor = c;
+        glClearColor(c[0],c[1],c[2],c[3]);
     }
 }

@@ -35,6 +35,10 @@ namespace renderframework
         /// TODO: Allow different blend functions here, but we probably won't ever use them
         void alphaBlending(bool enable);
 
+        /// Clear colour
+        /// Default black
+        void clearColor(vec4 c);
+
         // Rendering stuff and hacks below here
         std::map<std::string, std::shared_ptr<materials::PhongMaterialBare>> mMaterials;
         std::map<std::string, std::shared_ptr<ShaderProgram>> mShaders;
@@ -60,6 +64,7 @@ namespace renderframework
         GLuint catTexture;
 
         bool mEnableAlpha = true;
+        vec4 mClearColor = {0.f,0.f,0.f,1.f};
     };
 }
 
