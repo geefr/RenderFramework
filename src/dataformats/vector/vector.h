@@ -20,7 +20,7 @@ namespace renderframework { namespace vector {
         const std::vector<vec3>& vertices();
         const std::vector<vec4>& vertexColors();
         const std::vector<vec3>& normals();
-    protected:
+
         /**
          * Constructor
          *
@@ -41,6 +41,7 @@ namespace renderframework { namespace vector {
         void addVertex(vec3 vertex);
         void addVertex(vec3 vertex, vec4 color);
         void addVertex(vec3 vertex, vec4 color, vec3 normal);
+    protected:
 
         std::vector<vec3> mVertices;
         std::vector<vec4> mVertexColors;

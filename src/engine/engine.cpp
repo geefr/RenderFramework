@@ -130,9 +130,9 @@ namespace renderframework
         addMat("white rubber",{	0.05	,0.05	,0.05}, {	0.5	,0.5	,0.5}, {	0.7,	0.7,	0.7}, .078125 * 256.0);
         addMat("yellow rubber",{	0.05,	0.05	,0.0}, {	0.5	,0.5	,0.4}, {	0.7,	0.7,	0.04}, .078125 * 256.0);
 
-        light.mAmbient = {.2f,.2f,.2f};
-        light.mDiffuse = {.6f,.6f,.6f};
-        light.mSpecular = {.8f,.8f,.8f};
+        light.mAmbient = {.6f,.6f,.6f};
+        light.mDiffuse = {.2f,.2f,.2f};
+        light.mSpecular = {.0f,.0f,.0f};
         light.mPosition = {1.f,0.f,1.f};
     }
 
@@ -143,17 +143,20 @@ namespace renderframework
 
         glEnable(GL_DEPTH_TEST);
 
+        depthTest(mEnableDepthTest);
         alphaBlending(mEnableAlpha);
         clearColor(mClearColor);
+        MSAA(mMSAA);
 
         ////////////////////////////////////////////////////////////
 
         // Create and bind a VAO
-        // We need one bound, but otherwise don't use these right now
+        // The nodes will make their own, so this would be
+        // for global stuff and such I guess
         glGenVertexArrays(1, &vao);
         glBindVertexArray(vao);
 
-        // TODO: Pretty much a hack right now ;)
+        // Find where the shaders and such are
         if( mDataDir.empty() )
         {
           auto dataEnv = std::getenv("RENDERFRAMEWORK_ROOT");
@@ -170,7 +173,7 @@ namespace renderframework
         mShaders["phong"] = phong;
 
         // Link the shader
-        phong->id();
+        phong->init();
 
         phong->regUniform("modelViewProjectionMatrix");
         phong->regUniform("modelMatrix");
@@ -184,6 +187,8 @@ namespace renderframework
 
         // Eye position for specular calculations
         phong->regUniform("eyePos");
+
+        mTimeStart = std::chrono::high_resolution_clock::now();
     }
 
     void Engine::init2()
@@ -194,6 +199,8 @@ namespace renderframework
 
     void Engine::loop( float width, float height )
     {
+        mTimeCurrent = std::chrono::high_resolution_clock::now();
+
         // TODO: Hack, should use framebuffersizecallback ;)
         glViewport(0,0,width,height);
 
@@ -242,6 +249,12 @@ namespace renderframework
         mNode->render(v, p);
     }
 
+    void Engine::depthTest(bool enable)
+    {
+        mEnableDepthTest = enable;
+        mEnableDepthTest ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST);
+    }
+
     void Engine::alphaBlending(bool enable)
     {
         mEnableAlpha = enable;
@@ -260,5 +273,28 @@ namespace renderframework
     {
         mClearColor = c;
         glClearColor(c[0],c[1],c[2],c[3]);
+    }
+
+    void Engine::MSAA(bool enable)
+    {
+        mMSAA = enable;
+        if( mMSAA ) glEnable(GL_MULTISAMPLE);
+        else glDisable(GL_MULTISAMPLE);
+    }
+
+    float Engine::secondsSinceInit() const
+    {
+
+
+/*
+        double msSinceEpoch =
+                std::chrono::system_clock::now().time_since_epoch() /
+                std::chrono::milliseconds(1);
+        std::cerr.precision(200);
+        std::cerr << "ms since epoch: " << msSinceEpoch/1000.0 << std::endl;
+*/
+        auto since = mTimeCurrent - mTimeStart;
+        float msSince = since / std::chrono::milliseconds(1);
+        return msSince / 1000.0f;
     }
 }

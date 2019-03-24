@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <fstream>
 #include <vector>
+#include <chrono>
 
 #include "dataformats/raster/png/rfpng.h"
 #include "dataformats/vector/vector.h"
@@ -30,6 +31,9 @@ namespace renderframework
 
         // Engine options
 
+        /// Enable/Disable depth testing
+        void depthTest(bool enable);
+
         /// Enable/Disable alpha blending
         /// Default enabled, src alpha/1 - src alpha
         /// TODO: Allow different blend functions here, but we probably won't ever use them
@@ -38,6 +42,11 @@ namespace renderframework
         /// Clear colour
         /// Default black
         void clearColor(vec4 c);
+
+        /// MSAA enable
+        void MSAA(bool enable);
+
+        float secondsSinceInit() const;
 
         // Rendering stuff and hacks below here
         std::map<std::string, std::shared_ptr<materials::PhongMaterialBare>> mMaterials;
@@ -63,8 +72,13 @@ namespace renderframework
         GLuint vao;
         GLuint catTexture;
 
+        bool mEnableDepthTest = true;
         bool mEnableAlpha = true;
         vec4 mClearColor = {0.f,0.f,0.f,1.f};
+        bool mMSAA = true;
+
+        std::chrono::time_point<std::chrono::high_resolution_clock> mTimeStart;
+        std::chrono::time_point<std::chrono::high_resolution_clock> mTimeCurrent;
     };
 }
 

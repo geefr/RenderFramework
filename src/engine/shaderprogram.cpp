@@ -35,6 +35,25 @@ namespace renderframework
         glShaderSource(shader, 1, &srcPtr, nullptr);
         glCompileShader(shader);
 
+        GLint compileSuccess = 0;
+        glGetShaderiv(shader, GL_COMPILE_STATUS, &compileSuccess);
+        if( compileSuccess != GL_TRUE )
+        {
+            GLint logLength = 0;
+            glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLength);
+            std::vector<GLchar> log(static_cast<std::vector<GLchar>::size_type>(logLength));
+            glGetShaderInfoLog(shader, logLength, &logLength, &log[0]);
+            glDeleteShader(shader);
+            if( !log.empty() )
+            {
+              throw std::runtime_error("Failed to compile shader: " + shaderFileName + "\n" + std::string(reinterpret_cast<const char*>(&log[0])));
+            }
+            else
+            {
+              throw std::runtime_error("Failed to compile shader, unknown reason");
+            }
+        }
+
         m_shaders.push_back( {shaderType, shaderSource, shader} );
     }
 
