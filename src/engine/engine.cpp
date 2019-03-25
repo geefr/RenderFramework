@@ -199,6 +199,9 @@ namespace renderframework
 
     void Engine::loop( float width, float height )
     {
+        mWidth = width;
+        mHeight = height;
+
         mTimeCurrent = std::chrono::high_resolution_clock::now();
 
         // TODO: Hack, should use framebuffersizecallback ;)
@@ -284,17 +287,11 @@ namespace renderframework
 
     float Engine::secondsSinceInit() const
     {
-
-
-/*
-        double msSinceEpoch =
-                std::chrono::system_clock::now().time_since_epoch() /
-                std::chrono::milliseconds(1);
-        std::cerr.precision(200);
-        std::cerr << "ms since epoch: " << msSinceEpoch/1000.0 << std::endl;
-*/
         auto since = mTimeCurrent - mTimeStart;
         float msSince = since / std::chrono::milliseconds(1);
         return msSince / 1000.0f;
     }
+
+    float Engine::width() const { return mWidth; }
+    float Engine::height() const { return mHeight; }
 }

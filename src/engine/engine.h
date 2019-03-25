@@ -48,6 +48,9 @@ namespace renderframework
 
         float secondsSinceInit() const;
 
+        float width() const;
+        float height() const;
+
         // Rendering stuff and hacks below here
         std::map<std::string, std::shared_ptr<materials::PhongMaterialBare>> mMaterials;
         std::map<std::string, std::shared_ptr<ShaderProgram>> mShaders;
@@ -76,6 +79,8 @@ namespace renderframework
         bool mEnableAlpha = true;
         vec4 mClearColor = {0.f,0.f,0.f,1.f};
         bool mMSAA = true;
+        float mWidth = 0.f;
+        float mHeight = 0.f;
 
         std::chrono::time_point<std::chrono::high_resolution_clock> mTimeStart;
         std::chrono::time_point<std::chrono::high_resolution_clock> mTimeCurrent;
