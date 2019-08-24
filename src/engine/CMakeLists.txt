@@ -24,7 +24,7 @@ set( rf_mat_h
 
 add_library( rf ${LIBTYPE} ${rf_cpp} ${rf_h} ${rf_nodes_h} ${rf_mat_h} )
 
-target_link_libraries( rf rfraster OpenGL::GL )
+target_link_libraries( rf rfraster OpenGL::GL glm glfw)
 
 install( TARGETS rf
          ARCHIVE DESTINATION lib/RenderFramework

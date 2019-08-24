@@ -26,7 +26,10 @@ option( VECTOR_PRIMITIVES "Basic primitive shapes" ON )
 
 # Compiler/Tool requirements
 set( CMAKE_CXX_STANDARD 17 )
-set( CMAKE_CXX_FLAGS "-Werror=all" )
+
+if( NOT MSVC )
+  set( CMAKE_CXX_FLAGS "-Werror=all" )
+endif()
 
 # Package/System requirements
 find_package( glfw3 REQUIRED )
@@ -40,6 +43,7 @@ if( ENABLE_THIRDPARTY )
 endif()
 
 include_directories(${PROJECT_SOURCE_DIR}/src)
+
 
 # The meat of the project
 add_subdirectory(src)
