@@ -2,6 +2,7 @@
 #define COMMON_H
 
 #include <GL/glew.h>
+#include <GL/wglew.h>
 #include <GL/gl.h>
 
 #include <glm/glm.hpp>

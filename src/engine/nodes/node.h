@@ -64,6 +64,9 @@ namespace renderframework { namespace nodes {
         // Render this node and any children
         void render(mat4x4 viewMat, mat4x4 projMat);
         void render(mat4x4 nodeMat, mat4x4 viewMat, mat4x4 projMat);
+
+        // Update this node and any children
+        void update(double deltaT);
     protected:
         // Children need to implement these
         // Will be called by the public versions of these
@@ -74,13 +77,14 @@ namespace renderframework { namespace nodes {
         virtual void doInit();
         virtual void doUpload();
         virtual void doRender(mat4x4 nodeMat, mat4x4 viewMat, mat4x4 projMat);
+        virtual void doUpdate(double deltaT);
 
     private:
         vec3 mScale = vec3(1.0);
         vec3 mRot = vec3(0.0);
         vec3 mTrans = vec3(0.0);
 
-        vec3 mScaleDelta = vec3(1.0);
+        vec3 mScaleDelta = vec3(0.0);
         vec3 mRotDelta = vec3(0.0);
         vec3 mTransDelta = vec3(0.0);
 

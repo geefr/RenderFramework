@@ -16,6 +16,8 @@
 #include "materials/phongmaterialbare.h"
 #include "nodes/meshnodeda.h"
 #include "light.h"
+#include "framebuffer.h"
+#include "defaultframebuffer.h"
 
 namespace renderframework
 {
@@ -42,12 +44,29 @@ namespace renderframework
         mat4x4 viewMatrix() const;
 
         void projectionMatrixOrtho(vec4 orthoSpace);
-        void projectionMatrixPerspective(float fov, float aspect, float near, float far);
+        void projectionMatrixPerspective(float fov, float aspect, float nearPlane, float farPlane);
         void projectionMatrix(mat4x4 proj);
         
         mat4x4 projectionMatrix() const;
 
+        /**
+         * Update the engine/scene graph state
+         *
+         * Must be called once per application loop
+         * Must be called before render (assuming you want to update positions every render)
+         */
+        void update();
+
+        /**
+         * Render the scene
+         *
+         * If no framebuffer is provided will render to FBO 0
+         */
+        void render(float width, float height, const FrameBuffer* framebuffer = nullptr);
+        void render(const FrameBuffer* framebuffer);
+        /// @deprecated, see Engine::render
         void loop( float width, float height );
+        
 
         [[noreturn]] static void quit(std::string msg);
 
@@ -108,6 +127,8 @@ namespace renderframework
         mat4x4 mProjectionMatrix;
 
         vec4 mOrthoSpace = { -10.f,10.f,-10.f,10.f };
+
+        DefaultFrameBuffer mDefaultFramebuffer;
     };
 }
 

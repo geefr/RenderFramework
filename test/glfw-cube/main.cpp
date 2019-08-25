@@ -181,24 +181,24 @@ engine.mNode->scaleDelta() = {0.99f,0.99f,0.99f};
         // Pet the event doggie so it barks at our callbacks
         glfwPollEvents();
 
-        std::cerr << "scale: " << engine.mNode->scale().x;
+        std::cerr << "scale: " << engine.mNode->scale().x << std::endl;
         if( engine.mNode->scale().x > 0.8f )
         {
-            engine.mNode->scaleDelta() = {0.98f,0.98f,0.98f};
+            engine.mNode->scaleDelta() = {-0.1f};
         }
         else if( engine.mNode->scale().x < 0.001f )
         {
-            engine.mNode->scaleDelta() = {1.02f,1.02f,1.02f};
+            engine.mNode->scaleDelta() = {0.1f};
         }
 
-        std::cerr << "cubeNode scale: " << engine.mNode->scale().x;
+        std::cerr << "cubeNode scale: " << engine.mNode->scale().x << std::endl;
         if( cubeNode->scale().x > 0.8f )
         {
-            cubeNode->scaleDelta() = {0.9f,0.9f,0.9f};
+            cubeNode->scaleDelta() = {-0.2f};
         }
         else if( cubeNode->scale().x < 0.001f )
         {
-            cubeNode->scaleDelta() = {1.1f,1.1f,1.1f};
+            cubeNode->scaleDelta() = {0.2f};
         }
 
 

@@ -201,6 +201,7 @@ namespace renderframework
         phong->regUniform("eyePos");
 
         mTimeStart = std::chrono::high_resolution_clock::now();
+        mTimeCurrent = mTimeStart;
     }
 
     void Engine::init2()
@@ -241,10 +242,10 @@ namespace renderframework
         10.0f);
     }
 
-    void Engine::projectionMatrixPerspective(float fov, float aspect, float near, float far)
+    void Engine::projectionMatrixPerspective(float fov, float aspect, float nearPlane, float farPlane)
     {
       // fov, aspect, near plane distance, far plane distance
-      mProjectionMatrix = perspective(fov, aspect, near, far);
+      mProjectionMatrix = perspective(fov, aspect, nearPlane, farPlane);
     }
 
     void Engine::projectionMatrix(mat4x4 proj)
@@ -254,33 +255,60 @@ namespace renderframework
 
     mat4x4 Engine::projectionMatrix() const { return mProjectionMatrix; }
 
-    void Engine::loop( float width, float height )
+    void Engine::update()
     {
+      std::chrono::time_point<std::chrono::high_resolution_clock> current = std::chrono::high_resolution_clock::now();
+      auto delta = ((double)(current - mTimeCurrent).count()) / 1.0e9;
+      mTimeCurrent = current;
+      mNode->update(delta);
+    }
+
+    void Engine::render(float width, float height, const FrameBuffer* framebuffer)
+    {
+      if (framebuffer)
+      {
+        framebuffer->activate();
+      }
+      else
+      {
         mWidth = width;
         mHeight = height;
 
-        mTimeCurrent = std::chrono::high_resolution_clock::now();
+        mDefaultFramebuffer.activate();
 
-        // TODO: Hack, should use framebuffersizecallback ;)
-        glViewport(0,0,width,height);
+        // TODO: Hack, should move to defaultframebuffer, could remove this block then
+        // TODO: Should be handling framebuffersizecallback for default framebuffer adjustments ;)
+        glViewport(0, 0, width, height);
+      }
 
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        auto shader = mShaders["phong"];
+      auto shader = mShaders["phong"];
 
-        glUseProgram(shader->id());
-        glUniform3fv(shader->uniform("eyePos"), 1, value_ptr(mEyePos));
+      glUseProgram(shader->id());
+      glUniform3fv(shader->uniform("eyePos"), 1, value_ptr(mEyePos));
 
-        /*
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, catTexture);
-        glUniform1i(mShader.uniform("texture0"), 0);
-        glUniform1i(mShader.uniform("enableTexture0"), false);
-        */
+      /*
+      glActiveTexture(GL_TEXTURE0);
+      glBindTexture(GL_TEXTURE_2D, catTexture);
+      glUniform1i(mShader.uniform("texture0"), 0);
+      glUniform1i(mShader.uniform("enableTexture0"), false);
+      */
 
-        light.setUniforms(*(shader.get()));
+      light.setUniforms(*(shader.get()));
 
-        mNode->render(mViewMatrix, mProjectionMatrix);
+      mNode->render(mViewMatrix, mProjectionMatrix);
+    }
+
+    void Engine::render(const FrameBuffer* framebuffer)
+    {
+      render(framebuffer->width(), framebuffer->height(), framebuffer);
+    }
+
+    void Engine::loop( float width, float height )
+    {
+      update();
+      render(width, height);
     }
 
     void Engine::depthTest(bool enable)

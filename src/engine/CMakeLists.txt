@@ -1,5 +1,8 @@
 
-set( rf_cpp engine.cpp
+set( rf_cpp 
+    engine.cpp
+    defaultframebuffer.cpp
+    framebufferrendertotexture.cpp
     shaderprogram.cpp
     light.cpp
     nodes/node.cpp
@@ -8,8 +11,11 @@ set( rf_cpp engine.cpp
     materials/phongmaterialbare.cpp
 )
 
-set( rf_h engine.cpp
+set( rf_h
     engine.h
+    framebuffer.h
+    defaultframebuffer.h
+    framebufferrendertotexture.h
     shaderprogram.h
     light.h
     )

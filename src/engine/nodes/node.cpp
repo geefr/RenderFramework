@@ -22,7 +22,6 @@ namespace renderframework { namespace nodes {
     {
         mat4x4 m(1.0);
 
-
         m *= mUserModelMat;
 
         m = glm::translate(m, mTrans);
@@ -72,20 +71,29 @@ namespace renderframework { namespace nodes {
 
     void Node::render(mat4x4 nodeMat, mat4x4 viewMat, mat4x4 projMat)
     {
-        // Update if our transform is changing over time for some reason
-        mTrans += mTransDelta;
-        mRot += mRotDelta;
-        mScale *= mScaleDelta;
-
         // Apply this node's transformation matrix
         nodeMat = nodeMat * matrix();
         
-
         doRender(nodeMat, viewMat, projMat);
         for( auto& c: mChildren ) c->render(nodeMat, viewMat, projMat);
+    }
+
+    void Node::update(double deltaT)
+    {
+      doUpdate(deltaT);
+      for( auto& c : mChildren ) c->update(deltaT);
+    }
+
+    void Node::doUpdate(double deltaT)
+    {
+      // Update if our transform is changing over time for some reason
+      mTrans += mTransDelta * (float)deltaT;
+      mRot += mRotDelta * (float)deltaT;
+      mScale += mScaleDelta * (float)deltaT;
     }
 
     void Node::doInit() {}
     void Node::doUpload() {}
     void Node::doRender(mat4x4 nodeMat, mat4x4 viewMat, mat4x4 projMat) {}
+
 } }
