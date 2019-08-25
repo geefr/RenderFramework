@@ -155,6 +155,10 @@ namespace renderframework
 
         glEnable(GL_DEPTH_TEST);
 
+        glEnable(GL_CULL_FACE);
+        glFrontFace(GL_CCW);
+        glCullFace(GL_BACK);
+
         depthTest(mEnableDepthTest);
         alphaBlending(mEnableAlpha);
         clearColor(mClearColor);
