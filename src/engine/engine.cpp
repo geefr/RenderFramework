@@ -100,6 +100,10 @@ namespace renderframework
     }
 
     Engine::Engine()
+      : mEyePos(0.f)
+      , mModelMatrix(1.f)
+      , mViewMatrix(1.f)
+      , mProjectionMatrix(1.f)
     {
         auto addMat = [&](std::string name, vec3 a, vec3 b, vec3 c, float d) {
           mMaterials[name].reset( new materials::PhongMaterialBare(a,b,c,d) );
@@ -205,6 +209,25 @@ namespace renderframework
         mNode->upload();
     }
 
+    void Engine::updateViewLookAt(glm::vec3 eyePos, glm::vec3 target, glm::vec3 up)
+    {
+      // eye, center, up
+      mEyePos = eyePos;
+      mViewMatrix = lookAt(eyePos, target, up);
+    }
+
+    void Engine::updateView(mat4x4 viewMat)
+    {
+     /*
+      * RightX      RightY      RightZ      0
+      * UpX         UpY         UpZ         0
+      * LookX       LookY       LookZ       0
+      * PosX        PosY        PosZ        1
+      */
+      mViewMatrix = viewMat;
+      mEyePos = vec3(viewMat[0][3], viewMat[1][3], viewMat[2][3]);
+    }
+
     void Engine::loop( float width, float height )
     {
         mWidth = width;
@@ -217,36 +240,25 @@ namespace renderframework
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        mat4x4 m(1.f);
-        mat4x4 v(1.f);
-        mat4x4 p(1.f);
-
-        // eye, center, up
-        vec3 eyePos(0.f,0.f,5.0f);
-        v = lookAt(eyePos,vec3(0.f,0.f,0.f),vec3(0.f,1.f,0.f));
-
-        //vec3 eyePos(0.f,5.f,0.0f);
-        //v = lookAt(eyePos,vec3(0.f,0.f,0.f),vec3(0.f,0.0f,-1.f));
-
         if( mOrthogonal )
         {
-          p = ortho(mOrthoSpace[0],
-                    mOrthoSpace[1],
-                    mOrthoSpace[2],
-                    mOrthoSpace[3],
-                    0.1f,
-                    10.0f);
+          mProjectionMatrix = ortho(mOrthoSpace[0],
+                              mOrthoSpace[1],
+                              mOrthoSpace[2],
+                              mOrthoSpace[3],
+                              0.1f,
+                              10.0f);
         }
         else
         {
           // fov, aspect, near plane distance, far plane distance
-          p = perspective(90.f, width / height, 0.1f, 10.0f );
+          mProjectionMatrix = perspective(90.f, width / height, 0.1f, 10.0f );
         }
 
         auto shader = mShaders["phong"];
 
         glUseProgram(shader->id());
-        glUniform3fv(shader->uniform("eyePos"), 1, value_ptr(eyePos));
+        glUniform3fv(shader->uniform("eyePos"), 1, value_ptr(mEyePos));
 
         /*
         glActiveTexture(GL_TEXTURE0);
@@ -257,7 +269,7 @@ namespace renderframework
 
         light.setUniforms(*(shader.get()));
 
-        mNode->render(v, p);
+        mNode->render(mViewMatrix, mProjectionMatrix);
     }
 
     void Engine::depthTest(bool enable)

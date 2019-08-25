@@ -25,6 +25,21 @@ namespace renderframework
         Engine();
         void init();
         void init2();
+
+        /**
+         * Update view matrix
+         *
+         * eyePos will be stored and passed through to shader uniforms
+         */
+        void updateViewLookAt(vec3 eyePos, vec3 target, vec3 up);
+        /**
+         * Update view matrix explicitly
+         *
+         * eyePos in shaders will be extracted from this matrix
+         */
+        void updateView(mat4x4 viewMat);
+        
+
         void loop( float width, float height );
 
         [[noreturn]] static void quit(std::string msg);
@@ -84,6 +99,11 @@ namespace renderframework
 
         std::chrono::time_point<std::chrono::high_resolution_clock> mTimeStart;
         std::chrono::time_point<std::chrono::high_resolution_clock> mTimeCurrent;
+
+        vec3 mEyePos;
+        mat4x4 mModelMatrix;
+        mat4x4 mViewMatrix;
+        mat4x4 mProjectionMatrix;
     };
 }
 
