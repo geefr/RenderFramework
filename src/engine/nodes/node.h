@@ -39,6 +39,14 @@ namespace renderframework { namespace nodes {
         // Model Matrix
         // Recalculates every time it's called
         mat4x4 matrix() const;
+        
+        /**
+         * Explicit update of model matrix
+         *
+         * This matrix applies before any transforms set via
+         * scale/rotation/translation methods, TODO: Does this work? Will this collide and cause weird behaviour?
+         */
+        void userModelMatrix(mat4x4 mat);
 
         // Convert a vector in model space to world space
         // typically used to work out which way 'forward' is
@@ -75,6 +83,8 @@ namespace renderframework { namespace nodes {
         vec3 mScaleDelta = vec3(1.0);
         vec3 mRotDelta = vec3(0.0);
         vec3 mTransDelta = vec3(0.0);
+
+        mat4x4 mUserModelMat = mat4x4(1.f);
 
         Children mChildren;
     };

@@ -31,14 +31,21 @@ namespace renderframework
          *
          * eyePos will be stored and passed through to shader uniforms
          */
-        void updateViewLookAt(vec3 eyePos, vec3 target, vec3 up);
+        void viewMatrixLookAt(vec3 eyePos, vec3 target, vec3 up);
         /**
          * Update view matrix explicitly
          *
          * eyePos in shaders will be extracted from this matrix
          */
-        void updateView(mat4x4 viewMat);
+        void viewMatrix(mat4x4 viewMat);
+
+        mat4x4 viewMatrix() const;
+
+        void projectionMatrixOrtho(vec4 orthoSpace);
+        void projectionMatrixPerspective(float fov, float aspect, float near, float far);
+        void projectionMatrix(mat4x4 proj);
         
+        mat4x4 projectionMatrix() const;
 
         void loop( float width, float height );
 
@@ -72,11 +79,6 @@ namespace renderframework
         std::shared_ptr<nodes::Node> mNode;
         Light light;
 
-        // TODO: A total hack
-        // right now it's ortho if true
-        // 90 fov otherwise
-        bool mOrthogonal = false;
-        vec4 mOrthoSpace = {-10.f,10.f,-10.f,10.f};
 
         /// The root directory for the engines data
         /// If not set will be read from RENDERFRAMEWORK_ROOT environment variable
@@ -104,6 +106,8 @@ namespace renderframework
         mat4x4 mModelMatrix;
         mat4x4 mViewMatrix;
         mat4x4 mProjectionMatrix;
+
+        vec4 mOrthoSpace = { -10.f,10.f,-10.f,10.f };
     };
 }
 

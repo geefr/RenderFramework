@@ -209,14 +209,14 @@ namespace renderframework
         mNode->upload();
     }
 
-    void Engine::updateViewLookAt(glm::vec3 eyePos, glm::vec3 target, glm::vec3 up)
+    void Engine::viewMatrixLookAt(glm::vec3 eyePos, glm::vec3 target, glm::vec3 up)
     {
       // eye, center, up
       mEyePos = eyePos;
       mViewMatrix = lookAt(eyePos, target, up);
     }
 
-    void Engine::updateView(mat4x4 viewMat)
+    void Engine::viewMatrix(mat4x4 viewMat)
     {
      /*
       * RightX      RightY      RightZ      0
@@ -227,6 +227,32 @@ namespace renderframework
       mViewMatrix = viewMat;
       mEyePos = vec3(viewMat[0][3], viewMat[1][3], viewMat[2][3]);
     }
+
+    mat4x4 Engine::viewMatrix() const { return mViewMatrix; }
+
+    void Engine::projectionMatrixOrtho(vec4 orthoSpace)
+    {
+      vec4 mOrthoSpace = orthoSpace;
+      mProjectionMatrix = ortho(mOrthoSpace[0],
+        mOrthoSpace[1],
+        mOrthoSpace[2],
+        mOrthoSpace[3],
+        0.1f,
+        10.0f);
+    }
+
+    void Engine::projectionMatrixPerspective(float fov, float aspect, float near, float far)
+    {
+      // fov, aspect, near plane distance, far plane distance
+      mProjectionMatrix = perspective(fov, aspect, near, far);
+    }
+
+    void Engine::projectionMatrix(mat4x4 proj)
+    {
+      mProjectionMatrix = proj;
+    }
+
+    mat4x4 Engine::projectionMatrix() const { return mProjectionMatrix; }
 
     void Engine::loop( float width, float height )
     {
@@ -239,21 +265,6 @@ namespace renderframework
         glViewport(0,0,width,height);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        if( mOrthogonal )
-        {
-          mProjectionMatrix = ortho(mOrthoSpace[0],
-                              mOrthoSpace[1],
-                              mOrthoSpace[2],
-                              mOrthoSpace[3],
-                              0.1f,
-                              10.0f);
-        }
-        else
-        {
-          // fov, aspect, near plane distance, far plane distance
-          mProjectionMatrix = perspective(90.f, width / height, 0.1f, 10.0f );
-        }
 
         auto shader = mShaders["phong"];
 
