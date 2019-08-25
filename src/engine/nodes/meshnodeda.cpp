@@ -1,8 +1,6 @@
 #include "meshnodeda.h"
 #include "common.h"
 
-#include <GL/gl.h>
-
 #include <vector>
 #include <stdexcept>
 #include <algorithm>

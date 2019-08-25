@@ -138,6 +138,14 @@ namespace renderframework
 
     void Engine::init()
     {
+#ifdef _WIN32
+        GLenum err = glewInit();
+        if (err != GLEW_OK)
+        {
+          throw std::runtime_error("Failed to initialised GLEW");
+        }  
+#endif
+
         glEnable(GL_DEBUG_OUTPUT);
         glDebugMessageCallback(GLErrorCallback, nullptr);
 

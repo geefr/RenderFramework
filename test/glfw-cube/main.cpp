@@ -1,8 +1,16 @@
-#define GL_GLEXT_PROTOTYPES
+#include "engine/engine.h"
+
+#ifndef _WIN32
+  #define GL_GLEXT_PROTOTYPES
+#endif
 #include <GLFW/glfw3.h>
 
-#include "engine/engine.h"
 #include "dataformats/vector/primitives/cube.h"
+
+// TODO: Fix this..
+#ifndef M_PI
+# define M_PI 3.14159265358979323846
+#endif
 
 using namespace renderframework;
 Engine engine;
