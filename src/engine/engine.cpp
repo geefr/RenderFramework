@@ -221,16 +221,20 @@ namespace renderframework
       mViewMatrix = lookAt(eyePos, target, up);
     }
 
-    void Engine::viewMatrix(mat4x4 viewMat)
+    void Engine::viewMatrix(mat4x4 viewMat, vec3 eyePos)
     {
-     /*
-      * RightX      RightY      RightZ      0
-      * UpX         UpY         UpZ         0
-      * LookX       LookY       LookZ       0
-      * PosX        PosY        PosZ        1
-      */
       mViewMatrix = viewMat;
-      mEyePos = vec3(viewMat[0][3], viewMat[1][3], viewMat[2][3]);
+      /*
+      RightX      RightY      RightZ      0
+      UpX         UpY         UpZ         0
+      LookX       LookY       LookZ       0
+      PosX        PosY        PosZ        1*/
+      /*
+      mEyePos = vec3(viewMat[3][0], 
+                     viewMat[3][1],
+                     viewMat[3][2]);
+                     */
+                     mEyePos = eyePos;
     }
 
     mat4x4 Engine::viewMatrix() const { return mViewMatrix; }
@@ -243,7 +247,7 @@ namespace renderframework
         mOrthoSpace[2],
         mOrthoSpace[3],
         0.1f,
-        10.0f);
+        30.0f);
     }
 
     void Engine::projectionMatrixPerspective(float fov, float aspect, float nearPlane, float farPlane)
@@ -286,6 +290,7 @@ namespace renderframework
       }
 
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+      glEnable(GL_DEPTH_TEST);
 
       auto shader = mShaders["phong"];
 
@@ -302,6 +307,8 @@ namespace renderframework
       light.setUniforms(*(shader.get()));
 
       mNode->render(mViewMatrix, mProjectionMatrix);
+
+      if (framebuffer) framebuffer->resolve();
     }
 
     void Engine::render(const FrameBuffer* framebuffer)

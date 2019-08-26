@@ -39,7 +39,7 @@ namespace renderframework
          *
          * eyePos in shaders will be extracted from this matrix
          */
-        void viewMatrix(mat4x4 viewMat);
+        void viewMatrix(mat4x4 viewMat, vec3 eyePos);
 
         mat4x4 viewMatrix() const;
 

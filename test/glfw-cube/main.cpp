@@ -142,6 +142,14 @@ try
     // Generate the vertex data and such
     engine.mNode.reset(new nodes::Node());
     {
+      std::shared_ptr<nodes::MeshNodeDA> cubeNode(new nodes::MeshNodeDA());
+      cubeNode->meshes().emplace_back(new vector::Cube({ 0.f,0.f,20.f }, { 20.f,20.f,20.f }));
+      cubeNode->shader() = engine.mShaders["phong"];
+      cubeNode->material() = engine.mMaterials["emerald"];
+      engine.mNode->children().push_back(cubeNode);
+    }
+
+    {
         std::shared_ptr<nodes::MeshNodeDA> cubeNode(new nodes::MeshNodeDA());
         cubeNode->meshes().emplace_back(new vector::Cube({2.f,.0f,-2.f}, {2.0f, 2.0f, 2.0f}));
         cubeNode->meshes().emplace_back(new vector::Cube({-2.f,.0f,-2.f}, {2.0f, 2.0f, 2.0f}));
@@ -158,7 +166,6 @@ try
 
     std::shared_ptr<nodes::MeshNodeDA> cubeNode(new nodes::MeshNodeDA());
     cubeNode->scaleDelta() = {1.2f,1.2f,1.2f};
-
     {
         cubeNode->meshes().emplace_back(new vector::Cube({2.f,.0f,-2.f}, {2.0f, 2.0f, 2.0f}));
         cubeNode->meshes().emplace_back(new vector::Cube({-2.f,.0f,-2.f}, {2.0f, 2.0f, 2.0f}));

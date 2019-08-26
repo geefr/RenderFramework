@@ -14,8 +14,10 @@ namespace renderframework
       FrameBuffer();
       virtual ~FrameBuffer();
 
-      /// Set the render target to this framebuffer
+      /// Set the render target to this framebuffer, and prepare for drawing
       virtual void activate() const = 0;
+      /// Perform post-draw actions, such as resolving a MSAA buffer to a normal texture
+      virtual void resolve() const = 0;
 
       // TODO: These should be members on base class, very much a hack right now
       virtual float width() const;

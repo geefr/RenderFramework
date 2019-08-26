@@ -27,13 +27,17 @@ namespace renderframework
 
       /// Set the render target to this framebuffer
       virtual void activate() const override final;
+      virtual void resolve() const override final;
       virtual float width() const override final;
       virtual float height() const override final;
 
     private:
-      GLuint mFBO;
+      GLuint mFramebuffer;
+      GLuint mResolveFramebuffer;
       GLuint mTexture;
+      GLuint mResolveTexture;
       GLuint mDepthBuffer;
+      GLuint mResolveDepthBuffer;
       uint32_t mWidth;
       uint32_t mHeight;
   };

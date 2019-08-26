@@ -16,6 +16,7 @@ namespace renderframework
 
     /// Set the render target to this framebuffer
     virtual void activate() const override final;
+    virtual void resolve() const override final;
   };
 };
 
