@@ -191,21 +191,21 @@ engine.mNode->scaleDelta() = {0.99f,0.99f,0.99f};
         std::cerr << "scale: " << engine.mNode->scale().x << std::endl;
         if( engine.mNode->scale().x > 0.8f )
         {
-            engine.mNode->scaleDelta() = {-0.1f};
+            engine.mNode->scaleDelta() = vec3(-0.1f);
         }
         else if( engine.mNode->scale().x < 0.001f )
         {
-            engine.mNode->scaleDelta() = {0.1f};
+            engine.mNode->scaleDelta() = vec3(0.1f);
         }
 
         std::cerr << "cubeNode scale: " << engine.mNode->scale().x << std::endl;
         if( cubeNode->scale().x > 0.8f )
         {
-            cubeNode->scaleDelta() = {-0.2f};
+            cubeNode->scaleDelta() = vec3(-0.2f);
         }
         else if( cubeNode->scale().x < 0.001f )
         {
-            cubeNode->scaleDelta() = {0.2f};
+            cubeNode->scaleDelta() = vec3(0.2f);
         }
 
 

@@ -1,8 +1,13 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-#include <GL/glew.h>
-#include <GL/wglew.h>
+#ifdef _WIN32
+# include <GL/glew.h>
+# include <GL/wglew.h>
+#else
+# define GL_GLEXT_PROTOTYPES
+#endif
+
 #include <GL/gl.h>
 
 #include <glm/glm.hpp>
