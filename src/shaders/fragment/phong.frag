@@ -42,7 +42,6 @@ void main(void)
     vec4 diffuse = vec4(light.diffuse * max(dot(normal, lightDir) * material.diffuse, 0.0), 1.0) ;
 
     // Specular component
-    // TODO: shininess hardcoded to 32
     vec3 specularReflectDir = reflect(-lightDir, normal);
     vec4 specular = vec4(light.specular * pow(max(dot(eyeDir, specularReflectDir), 0.0), material.shininess) * material.specular, 1.0);
 

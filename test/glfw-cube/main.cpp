@@ -1,8 +1,16 @@
-#define GL_GLEXT_PROTOTYPES
+#include "engine/engine.h"
+
+#ifndef _WIN32
+  #define GL_GLEXT_PROTOTYPES
+#endif
 #include <GLFW/glfw3.h>
 
-#include "engine/engine.h"
 #include "dataformats/vector/primitives/cube.h"
+
+// TODO: Fix this..
+#ifndef M_PI
+# define M_PI 3.14159265358979323846
+#endif
 
 using namespace renderframework;
 Engine engine;
@@ -134,6 +142,14 @@ try
     // Generate the vertex data and such
     engine.mNode.reset(new nodes::Node());
     {
+      std::shared_ptr<nodes::MeshNodeDA> cubeNode(new nodes::MeshNodeDA());
+      cubeNode->meshes().emplace_back(new vector::Cube({ 0.f,0.f,20.f }, { 20.f,20.f,20.f }));
+      cubeNode->shader() = engine.mShaders["phong"];
+      cubeNode->material() = engine.mMaterials["emerald"];
+      engine.mNode->children().push_back(cubeNode);
+    }
+
+    {
         std::shared_ptr<nodes::MeshNodeDA> cubeNode(new nodes::MeshNodeDA());
         cubeNode->meshes().emplace_back(new vector::Cube({2.f,.0f,-2.f}, {2.0f, 2.0f, 2.0f}));
         cubeNode->meshes().emplace_back(new vector::Cube({-2.f,.0f,-2.f}, {2.0f, 2.0f, 2.0f}));
@@ -150,7 +166,6 @@ try
 
     std::shared_ptr<nodes::MeshNodeDA> cubeNode(new nodes::MeshNodeDA());
     cubeNode->scaleDelta() = {1.2f,1.2f,1.2f};
-
     {
         cubeNode->meshes().emplace_back(new vector::Cube({2.f,.0f,-2.f}, {2.0f, 2.0f, 2.0f}));
         cubeNode->meshes().emplace_back(new vector::Cube({-2.f,.0f,-2.f}, {2.0f, 2.0f, 2.0f}));
@@ -173,24 +188,24 @@ engine.mNode->scaleDelta() = {0.99f,0.99f,0.99f};
         // Pet the event doggie so it barks at our callbacks
         glfwPollEvents();
 
-        std::cerr << "scale: " << engine.mNode->scale().x;
+        std::cerr << "scale: " << engine.mNode->scale().x << std::endl;
         if( engine.mNode->scale().x > 0.8f )
         {
-            engine.mNode->scaleDelta() = {0.98f,0.98f,0.98f};
+            engine.mNode->scaleDelta() = vec3(-0.1f);
         }
         else if( engine.mNode->scale().x < 0.001f )
         {
-            engine.mNode->scaleDelta() = {1.02f,1.02f,1.02f};
+            engine.mNode->scaleDelta() = vec3(0.1f);
         }
 
-        std::cerr << "cubeNode scale: " << engine.mNode->scale().x;
+        std::cerr << "cubeNode scale: " << engine.mNode->scale().x << std::endl;
         if( cubeNode->scale().x > 0.8f )
         {
-            cubeNode->scaleDelta() = {0.9f,0.9f,0.9f};
+            cubeNode->scaleDelta() = vec3(-0.2f);
         }
         else if( cubeNode->scale().x < 0.001f )
         {
-            cubeNode->scaleDelta() = {1.1f,1.1f,1.1f};
+            cubeNode->scaleDelta() = vec3(0.2f);
         }
 
 

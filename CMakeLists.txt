@@ -9,7 +9,7 @@ set(RF_VERSION_ABI 1)
 
 project(RenderFramework VERSION ${RF_VERSION_STRING})
 
-if( NOT CMAKE_BUILD_TYPE )
+if( NOT CMAKE_BUILD_TYPE AND NOT MSVC )
   set( CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE )
   set_property( CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Release" "Debug" "MinSizeRel" "RelWithDebInfo" )
 endif()
@@ -26,12 +26,21 @@ option( VECTOR_PRIMITIVES "Basic primitive shapes" ON )
 
 # Compiler/Tool requirements
 set( CMAKE_CXX_STANDARD 17 )
-set( CMAKE_CXX_FLAGS "-Werror=all" )
+
+if( NOT MSVC )
+  set( CMAKE_CXX_FLAGS "-Werror=all" )
+endif()
 
 # Package/System requirements
 find_package( glfw3 REQUIRED )
 find_package( OpenGL REQUIRED )
 find_package( glm REQUIRED )
+if( MSVC )
+  find_package( glew REQUIRED )
+  if( MSVC )
+    include_directories( ${GLEW_INCLUDE_DIRS} )
+  endif()
+endif()
 
 # Top level includes and such
 if( ENABLE_THIRDPARTY )
@@ -40,6 +49,7 @@ if( ENABLE_THIRDPARTY )
 endif()
 
 include_directories(${PROJECT_SOURCE_DIR}/src)
+
 
 # The meat of the project
 add_subdirectory(src)
