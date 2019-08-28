@@ -93,6 +93,7 @@ namespace renderframework
     {
         if( !m_program ) throw std::runtime_error("ShaderProgram::regAttribute: Program not initialised, call id first");
         auto id = glGetAttribLocation(m_program, attributeName.c_str());
+        if( id == -1 ) throw std::runtime_error("ShaderProgram::regAttribute: Failed to lookup attrib location: " + attributeName);
         m_attributes[attributeName] = {id, attributeName};
 
         glEnableVertexAttribArray(static_cast<GLuint>(id));
