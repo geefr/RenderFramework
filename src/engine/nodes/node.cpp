@@ -22,6 +22,8 @@ namespace renderframework { namespace nodes {
     {
         mat4x4 m(1.0);
 
+        m *= mUserModelMat;
+
         m = glm::translate(m, mTrans);
 
         m = rotate(m, mRot[0], vec3(1.f,0.f,0.f));
@@ -29,18 +31,23 @@ namespace renderframework { namespace nodes {
         m = rotate(m, mRot[2], vec3(0.f,0.f,1.f));
 
         m = glm::scale(m, mScale);
-
+        
         return m;
     }
+
+    void Node::userModelMatrix(mat4x4 mat) { mUserModelMat = mat; }
 
     vec3 Node::modelVecToWorldVec( vec3 v )
     {
         // Just dealing with a direction here
         // so don't care about scale/translate
         mat4x4 m(1.0);
+
+        m *= mUserModelMat;
         m = rotate(m, mRot[0], - vec3(1.f,0.f,0.f));
         m = rotate(m, mRot[1], - vec3(0.f,1.f,0.f));
         m = rotate(m, mRot[2], - vec3(0.f,0.f,1.f));
+        
         return vec4(v, 1.0f) * m;
     }
 
@@ -64,19 +71,29 @@ namespace renderframework { namespace nodes {
 
     void Node::render(mat4x4 nodeMat, mat4x4 viewMat, mat4x4 projMat)
     {
-        // Update if our transform is changing over time for some reason
-        mTrans += mTransDelta;
-        mRot += mRotDelta;
-        mScale *= mScaleDelta;
-
         // Apply this node's transformation matrix
         nodeMat = nodeMat * matrix();
-
+        
         doRender(nodeMat, viewMat, projMat);
         for( auto& c: mChildren ) c->render(nodeMat, viewMat, projMat);
+    }
+
+    void Node::update(double deltaT)
+    {
+      doUpdate(deltaT);
+      for( auto& c : mChildren ) c->update(deltaT);
+    }
+
+    void Node::doUpdate(double deltaT)
+    {
+      // Update if our transform is changing over time for some reason
+      mTrans += mTransDelta * (float)deltaT;
+      mRot += mRotDelta * (float)deltaT;
+      mScale += mScaleDelta * (float)deltaT;
     }
 
     void Node::doInit() {}
     void Node::doUpload() {}
     void Node::doRender(mat4x4 nodeMat, mat4x4 viewMat, mat4x4 projMat) {}
+
 } }

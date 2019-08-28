@@ -8,3 +8,6 @@ target_link_libraries( test_glfw-cube
     rfvector
     rfvector_primitives
     glfw )
+
+install( TARGETS test_glfw-cube
+         ARCHIVE DESTINATION bin )

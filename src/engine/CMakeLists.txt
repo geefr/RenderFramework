@@ -1,5 +1,8 @@
 
-set( rf_cpp engine.cpp
+set( rf_cpp 
+    engine.cpp
+    defaultframebuffer.cpp
+    framebufferrendertotexture.cpp
     shaderprogram.cpp
     light.cpp
     nodes/node.cpp
@@ -8,8 +11,11 @@ set( rf_cpp engine.cpp
     materials/phongmaterialbare.cpp
 )
 
-set( rf_h engine.cpp
+set( rf_h
     engine.h
+    framebuffer.h
+    defaultframebuffer.h
+    framebufferrendertotexture.h
     shaderprogram.h
     light.h
     )
@@ -24,7 +30,10 @@ set( rf_mat_h
 
 add_library( rf ${LIBTYPE} ${rf_cpp} ${rf_h} ${rf_nodes_h} ${rf_mat_h} )
 
-target_link_libraries( rf rfraster OpenGL::GL )
+target_link_libraries( rf rfraster OpenGL::GL glm glfw)
+if( MSVC )
+  target_link_libraries( rf ${GLEW_LIBRARIES} )
+endif()
 
 install( TARGETS rf
          ARCHIVE DESTINATION lib/RenderFramework

@@ -7,25 +7,25 @@ namespace renderframework { namespace vector {
     {
         // Add as 1x1x1 around 0,0,0 then scale
 
-        // Bottom
+        // Bottom/
+        addVertex({ -.5f,-.5f,-.5f }, { 1.f,0.f,0.f,1.f }, { 0.f,-1.f,0.f });
+        addVertex({  .5f,-.5f,-.5f }, { 1.f,0.f,0.f,1.f }, { 0.f,-1.f,0.f });
+        addVertex({ -.5f,-.5f,.5f }, { 1.f,0.f,0.f,1.f }, { 0.f,-1.f,0.f });
+
         addVertex({-.5f,-.5f,.5f}, {1.f,0.f,0.f,1.f}, {0.f,-1.f,0.f});
         addVertex({ .5f,-.5f,-.5f}, {0.f,1.f,0.f,1.f}, {0.f,-1.f,0.f});
-        addVertex({ .5f,-.5f,.5f}, {0.f,0.f,1.f,1.f}, {0.f,-1.f,0.f});
+        addVertex({ .5f,-.5f, .5f}, {0.f,0.f,1.f,1.f}, {0.f,-1.f,0.f});
 
-        addVertex({-.5f,-.5f,.5f}, {1.f,0.f,0.f,1.f}, {0.f,-1.f,0.f});
-        addVertex({-.5f,-.5f,-.5f}, {0.f,1.f,0.f,1.f}, {0.f,-1.f,0.f});
-        addVertex({ .5f,-.5f,-.5f}, {0.f,0.f,1.f,1.f}, {0.f,-1.f,0.f});
+        // Top/
+        addVertex({-.5f,.5f, .5f}, {1.f,0.f,0.f,1.f}, {0.f,1.f,0.f});
+        addVertex({ .5f,.5f, .5f}, {0.f,1.f,0.f,1.f}, {0.f,1.f,0.f});
+        addVertex({-.5f,.5f,-.5f}, {0.f,0.f,1.f,1.f}, {0.f,1.f,0.f});
 
-        // Top
-        addVertex({-.5f,.5f,.5f}, {1.f,0.f,0.f,1.f}, {0.f,1.f,0.f});
-        addVertex({ .5f,.5f,-.5f}, {0.f,1.f,0.f,1.f}, {0.f,1.f,0.f});
-        addVertex({ .5f,.5f,.5f}, {0.f,0.f,1.f,1.f}, {0.f,1.f,0.f});
-
-        addVertex({-.5f,.5f,.5f}, {1.f,0.f,0.f,1.f}, {0.f,1.f,0.f});
-        addVertex({-.5f,.5f,-.5f}, {0.f,1.f,0.f,1.f}, {0.f,1.f,0.f});
+        addVertex({-.5f,.5f,-.5f}, {1.f,0.f,0.f,1.f}, {0.f,1.f,0.f});
+        addVertex({ .5f,.5f, .5f}, {0.f,1.f,0.f,1.f}, {0.f,1.f,0.f});
         addVertex({ .5f,.5f,-.5f}, {0.f,0.f,1.f,1.f}, {0.f,1.f,0.f});
 
-        // Left
+        // Left/
         addVertex({-.5f,.5f,-.5f}, {1.f,0.f,0.f,1.f}, {-1.f,0.f,0.f});
         addVertex({-.5f,-.5f,-.5f}, {0.f,1.f,0.f,1.f}, {-1.f,0.f,0.f});
         addVertex({-.5f,.5f,.5f}, {0.f,0.f,1.f,1.f}, {-1.f,0.f,0.f});
@@ -35,15 +35,15 @@ namespace renderframework { namespace vector {
         addVertex({-.5f,-.5f,.5f}, {0.f,0.f,1.f,1.f}, {-1.f,0.f,0.f});
 
         // Right
-        addVertex({.5f,.5f,-.5f}, {1.f,0.f,0.f,1.f}, {1.f,0.f,0.f});
-        addVertex({.5f,-.5f,-.5f}, {0.f,1.f,0.f,1.f}, {1.f,0.f,0.f});
-        addVertex({.5f,.5f,.5f}, {0.f,0.f,1.f,1.f}, {1.f,0.f,0.f});
+        addVertex({.5f, .5f, .5f}, {1.f,0.f,0.f,1.f}, {1.f,0.f,0.f});
+        addVertex({.5f,-.5f, .5f}, {0.f,1.f,0.f,1.f}, {1.f,0.f,0.f});
+        addVertex({.5f,-.5f,-.5f}, {0.f,0.f,1.f,1.f}, {1.f,0.f,0.f});
 
-        addVertex({.5f,.5f,.5f}, {1.f,0.f,0.f,1.f}, {1.f,0.f,0.f});
+        addVertex({.5f, .5f, .5f}, {1.f,0.f,0.f,1.f}, {1.f,0.f,0.f});
         addVertex({.5f,-.5f,-.5f}, {0.f,1.f,0.f,1.f}, {1.f,0.f,0.f});
-        addVertex({.5f,-.5f,.5f}, {0.f,0.f,1.f,1.f}, {1.f,0.f,0.f});
+        addVertex({.5f,.5f,-.5f}, {0.f,0.f,1.f,1.f}, {1.f,0.f,0.f});
 
-        // Front
+        // Front/
         addVertex({-.5f,-.5f, .5f}, {1.f,0.f,0.f,1.f}, {0.f,0.f,1.f});
         addVertex({ .5f, .5f, .5f}, {0.f,1.f,0.f,1.f}, {0.f,0.f,1.f});
         addVertex({-.5f, .5f, .5f}, {0.f,0.f,1.f,1.f}, {0.f,0.f,1.f});
@@ -52,14 +52,14 @@ namespace renderframework { namespace vector {
         addVertex({ .5f,-.5f, .5f}, {0.f,1.f,0.f,1.f}, {0.f,0.f,1.f});
         addVertex({ .5f, .5f, .5f}, {0.f,0.f,1.f,1.f}, {0.f,0.f,1.f});
 
-        // Back
+        // Back/
         addVertex({-.5f,-.5f,-.5f}, {1.f,0.f,0.f,1.f}, {0.f,0.f,-1.f});
-        addVertex({ .5f, .5f,-.5f}, {0.f,1.f,0.f,1.f}, {0.f,0.f,-1.f});
-        addVertex({-.5f, .5f,-.5f}, {0.f,0.f,1.f,1.f}, {0.f,0.f,-1.f});
+        addVertex({-.5f, .5f,-.5f}, {0.f,1.f,0.f,1.f}, {0.f,0.f,-1.f});
+        addVertex({ .5f,-.5f,-.5f}, {0.f,0.f,1.f,1.f}, {0.f,0.f,-1.f});
 
-        addVertex({-.5f,-.5f,-.5f}, {1.f,0.f,0.f,1.f}, {0.f,0.f,-1.f});
-        addVertex({ .5f,-.5f,-.5f}, {0.f,1.f,0.f,1.f}, {0.f,0.f,-1.f});
-        addVertex({ .5f, .5f,-.5f}, {0.f,0.f,1.f,1.f}, {0.f,0.f,-1.f});
+        addVertex({-.5f, .5f,-.5f}, {1.f,0.f,0.f,1.f}, {0.f,0.f,-1.f});
+        addVertex({ .5f, .5f,-.5f}, {0.f,1.f,0.f,1.f}, {0.f,0.f,-1.f});
+        addVertex({ .5f,-.5f,-.5f}, {0.f,0.f,1.f,1.f}, {0.f,0.f,-1.f});
 
         for( auto& v: mVertices )
         {

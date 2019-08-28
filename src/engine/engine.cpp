@@ -100,6 +100,10 @@ namespace renderframework
     }
 
     Engine::Engine()
+      : mEyePos(0.f)
+      , mModelMatrix(1.f)
+      , mViewMatrix(1.f)
+      , mProjectionMatrix(1.f)
     {
         auto addMat = [&](std::string name, vec3 a, vec3 b, vec3 c, float d) {
           mMaterials[name].reset( new materials::PhongMaterialBare(a,b,c,d) );
@@ -138,10 +142,22 @@ namespace renderframework
 
     void Engine::init()
     {
+#ifdef _WIN32
+        GLenum err = glewInit();
+        if (err != GLEW_OK)
+        {
+          throw std::runtime_error("Failed to initialised GLEW");
+        }  
+#endif
+
         glEnable(GL_DEBUG_OUTPUT);
         glDebugMessageCallback(GLErrorCallback, nullptr);
 
         glEnable(GL_DEPTH_TEST);
+
+        glEnable(GL_CULL_FACE);
+        glFrontFace(GL_CCW);
+        glCullFace(GL_BACK);
 
         depthTest(mEnableDepthTest);
         alphaBlending(mEnableAlpha);
@@ -189,6 +205,7 @@ namespace renderframework
         phong->regUniform("eyePos");
 
         mTimeStart = std::chrono::high_resolution_clock::now();
+        mTimeCurrent = mTimeStart;
     }
 
     void Engine::init2()
@@ -197,59 +214,112 @@ namespace renderframework
         mNode->upload();
     }
 
-    void Engine::loop( float width, float height )
+    void Engine::viewMatrixLookAt(glm::vec3 eyePos, glm::vec3 target, glm::vec3 up)
     {
+      // eye, center, up
+      mEyePos = eyePos;
+      mViewMatrix = lookAt(eyePos, target, up);
+    }
+
+    void Engine::viewMatrix(mat4x4 viewMat, vec3 eyePos)
+    {
+      mViewMatrix = viewMat;
+      /*
+      RightX      RightY      RightZ      0
+      UpX         UpY         UpZ         0
+      LookX       LookY       LookZ       0
+      PosX        PosY        PosZ        1*/
+      /*
+      mEyePos = vec3(viewMat[3][0], 
+                     viewMat[3][1],
+                     viewMat[3][2]);
+                     */
+                     mEyePos = eyePos;
+    }
+
+    mat4x4 Engine::viewMatrix() const { return mViewMatrix; }
+
+    void Engine::projectionMatrixOrtho(vec4 orthoSpace)
+    {
+      vec4 mOrthoSpace = orthoSpace;
+      mProjectionMatrix = ortho(mOrthoSpace[0],
+        mOrthoSpace[1],
+        mOrthoSpace[2],
+        mOrthoSpace[3],
+        0.1f,
+        30.0f);
+    }
+
+    void Engine::projectionMatrixPerspective(float fov, float aspect, float nearPlane, float farPlane)
+    {
+      // fov, aspect, near plane distance, far plane distance
+      mProjectionMatrix = perspective(fov, aspect, nearPlane, farPlane);
+    }
+
+    void Engine::projectionMatrix(mat4x4 proj)
+    {
+      mProjectionMatrix = proj;
+    }
+
+    mat4x4 Engine::projectionMatrix() const { return mProjectionMatrix; }
+
+    void Engine::update()
+    {
+      std::chrono::time_point<std::chrono::high_resolution_clock> current = std::chrono::high_resolution_clock::now();
+      auto delta = ((double)(current - mTimeCurrent).count()) / 1.0e9;
+      mTimeCurrent = current;
+      mNode->update(delta);
+    }
+
+    void Engine::render(float width, float height, const FrameBuffer* framebuffer)
+    {
+      if (framebuffer)
+      {
+        framebuffer->activate();
+      }
+      else
+      {
         mWidth = width;
         mHeight = height;
 
-        mTimeCurrent = std::chrono::high_resolution_clock::now();
+        mDefaultFramebuffer.activate();
 
-        // TODO: Hack, should use framebuffersizecallback ;)
-        glViewport(0,0,width,height);
+        // TODO: Hack, should move to defaultframebuffer, could remove this block then
+        // TODO: Should be handling framebuffersizecallback for default framebuffer adjustments ;)
+        glViewport(0, 0, width, height);
+      }
 
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+      glEnable(GL_DEPTH_TEST);
 
-        mat4x4 m(1.f);
-        mat4x4 v(1.f);
-        mat4x4 p(1.f);
+      auto shader = mShaders["phong"];
 
-        // eye, center, up
-        vec3 eyePos(0.f,0.f,5.0f);
-        v = lookAt(eyePos,vec3(0.f,0.f,0.f),vec3(0.f,1.f,0.f));
+      glUseProgram(shader->id());
+      glUniform3fv(shader->uniform("eyePos"), 1, value_ptr(mEyePos));
 
-        //vec3 eyePos(0.f,5.f,0.0f);
-        //v = lookAt(eyePos,vec3(0.f,0.f,0.f),vec3(0.f,0.0f,-1.f));
+      /*
+      glActiveTexture(GL_TEXTURE0);
+      glBindTexture(GL_TEXTURE_2D, catTexture);
+      glUniform1i(mShader.uniform("texture0"), 0);
+      glUniform1i(mShader.uniform("enableTexture0"), false);
+      */
 
-        if( mOrthogonal )
-        {
-          p = ortho(mOrthoSpace[0],
-                    mOrthoSpace[1],
-                    mOrthoSpace[2],
-                    mOrthoSpace[3],
-                    0.1f,
-                    10.0f);
-        }
-        else
-        {
-          // fov, aspect, near plane distance, far plane distance
-          p = perspective(90.f, width / height, 0.1f, 10.0f );
-        }
+      light.setUniforms(*(shader.get()));
 
-        auto shader = mShaders["phong"];
+      mNode->render(mViewMatrix, mProjectionMatrix);
 
-        glUseProgram(shader->id());
-        glUniform3fv(shader->uniform("eyePos"), 1, value_ptr(eyePos));
+      if (framebuffer) framebuffer->resolve();
+    }
 
-        /*
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, catTexture);
-        glUniform1i(mShader.uniform("texture0"), 0);
-        glUniform1i(mShader.uniform("enableTexture0"), false);
-        */
+    void Engine::render(const FrameBuffer* framebuffer)
+    {
+      render(framebuffer->width(), framebuffer->height(), framebuffer);
+    }
 
-        light.setUniforms(*(shader.get()));
-
-        mNode->render(v, p);
+    void Engine::loop( float width, float height )
+    {
+      update();
+      render(width, height);
     }
 
     void Engine::depthTest(bool enable)

@@ -16,6 +16,8 @@
 #include "materials/phongmaterialbare.h"
 #include "nodes/meshnodeda.h"
 #include "light.h"
+#include "framebuffer.h"
+#include "defaultframebuffer.h"
 
 namespace renderframework
 {
@@ -25,7 +27,46 @@ namespace renderframework
         Engine();
         void init();
         void init2();
+
+        /**
+         * Update view matrix
+         *
+         * eyePos will be stored and passed through to shader uniforms
+         */
+        void viewMatrixLookAt(vec3 eyePos, vec3 target, vec3 up);
+        /**
+         * Update view matrix explicitly
+         *
+         * eyePos in shaders will be extracted from this matrix
+         */
+        void viewMatrix(mat4x4 viewMat, vec3 eyePos);
+
+        mat4x4 viewMatrix() const;
+
+        void projectionMatrixOrtho(vec4 orthoSpace);
+        void projectionMatrixPerspective(float fov, float aspect, float nearPlane, float farPlane);
+        void projectionMatrix(mat4x4 proj);
+        
+        mat4x4 projectionMatrix() const;
+
+        /**
+         * Update the engine/scene graph state
+         *
+         * Must be called once per application loop
+         * Must be called before render (assuming you want to update positions every render)
+         */
+        void update();
+
+        /**
+         * Render the scene
+         *
+         * If no framebuffer is provided will render to FBO 0
+         */
+        void render(float width, float height, const FrameBuffer* framebuffer = nullptr);
+        void render(const FrameBuffer* framebuffer);
+        /// @deprecated, see Engine::render
         void loop( float width, float height );
+        
 
         [[noreturn]] static void quit(std::string msg);
 
@@ -57,11 +98,6 @@ namespace renderframework
         std::shared_ptr<nodes::Node> mNode;
         Light light;
 
-        // TODO: A total hack
-        // right now it's ortho if true
-        // 90 fov otherwise
-        bool mOrthogonal = false;
-        vec4 mOrthoSpace = {-10.f,10.f,-10.f,10.f};
 
         /// The root directory for the engines data
         /// If not set will be read from RENDERFRAMEWORK_ROOT environment variable
@@ -84,6 +120,15 @@ namespace renderframework
 
         std::chrono::time_point<std::chrono::high_resolution_clock> mTimeStart;
         std::chrono::time_point<std::chrono::high_resolution_clock> mTimeCurrent;
+
+        vec3 mEyePos;
+        mat4x4 mModelMatrix;
+        mat4x4 mViewMatrix;
+        mat4x4 mProjectionMatrix;
+
+        vec4 mOrthoSpace = { -10.f,10.f,-10.f,10.f };
+
+        DefaultFrameBuffer mDefaultFramebuffer;
     };
 }
 

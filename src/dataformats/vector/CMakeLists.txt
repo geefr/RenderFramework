@@ -1,6 +1,6 @@
 
 add_library( rfvector ${LIBTYPE} vector.h vector.cpp )
-
+target_link_libraries( rfvector glm )
 if( VECTOR_PRIMITIVES )
     add_subdirectory(primitives)
 endif()
