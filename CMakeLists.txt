@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 3.6)
 
 # Project Settings
-set(RF_VERSION_MAJOR 1)
+set(RF_VERSION_MAJOR 2)
 set(RF_VERSION_MINOR 0)
-set(RF_VERSION_PATCH 1)
+set(RF_VERSION_PATCH 0)
 set(RF_VERSION_STRING ${RF_VERSION_MAJOR}.${RF_VERSION_MINOR}.${RF_VERSION_PATCH})
-set(RF_VERSION_ABI 1)
+set(RF_VERSION_ABI 2)
 
 project(RenderFramework VERSION ${RF_VERSION_STRING})
 
@@ -20,9 +20,9 @@ if( NOT LIBTYPE )
 endif()
 
 option( ENABLE_TEST "Enable tests" ON )
-option( ENABLE_THIRDPARTY "Enable third party components" ON )
 option( RASTER_PNG "PNG Support via libPNG" ON )
 option( VECTOR_PRIMITIVES "Basic primitive shapes" ON )
+option( ENABLE_VR "Enable VR support" OFF )
 
 # Compiler/Tool requirements
 set( CMAKE_CXX_STANDARD 17 )
@@ -42,13 +42,20 @@ if( MSVC )
   endif()
 endif()
 
-# Top level includes and such
-if( ENABLE_THIRDPARTY )
-    # linmath is needed by pretty much everything
-    include_directories( ${PROJECT_SOURCE_DIR}/thirdparty/linmath )
-endif()
-
 include_directories(${PROJECT_SOURCE_DIR}/src)
+
+if( ENABLE_VR )
+  # TODO: Paths hardcoded for now
+  if( NOT OPENVR_ROOT )
+    message( FATAL_ERROR "VR Support enabled but OPENVR_ROOT not set")
+  endif()
+
+  if( MSVC )
+    set( OPENVR_LIB "openvr_api64" )
+  else()
+    set( OPENVR_LIB "openvr_api" )
+  endif()
+endif()
 
 
 # The meat of the project
@@ -56,9 +63,4 @@ add_subdirectory(src)
 
 if( ENABLE_TEST )
     add_subdirectory(test)
-endif()
-
-if( ENABLE_THIRDPARTY )
-    # Nothing here that needs linking yet
-    #add_subdirectory(thirdparty)
 endif()
