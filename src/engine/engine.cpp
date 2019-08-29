@@ -150,6 +150,16 @@ namespace renderframework
         }  
 #endif
 
+        GLint majVer=0;
+        GLint minVer=0;
+        glGetIntegerv(GL_MAJOR_VERSION, &majVer);
+        glGetIntegerv(GL_MINOR_VERSION, &minVer);
+
+        if( majVer < 4 || (majVer == 4 && minVer < 5) )
+        {
+          throw std::runtime_error("ERROR: Render Framework requires a minimum of OpenGL 4.5");
+        }
+
         glEnable(GL_DEBUG_OUTPUT);
         glDebugMessageCallback(GLErrorCallback, nullptr);
 
