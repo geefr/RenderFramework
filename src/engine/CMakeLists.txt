@@ -1,4 +1,8 @@
 
+if( ENABLE_VR )
+  add_subdirectory(vr)
+endif()
+
 set( rf_cpp 
     engine.cpp
     defaultframebuffer.cpp
