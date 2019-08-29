@@ -16,7 +16,7 @@ link_directories( ${OPENVR_ROOT}/lib )
 
 add_library( rfvr ${LIBTYPE} ${rfvr_cpp} ${rfvr_h} )
 
-target_link_libraries( rfvr ${OPENVR_LIB})
+target_link_libraries( rfvr ${OPENVR_LIB} glm)
 
 install( TARGETS rfvr
          ARCHIVE DESTINATION lib/RenderFramework
