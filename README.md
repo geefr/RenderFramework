@@ -48,5 +48,5 @@ Texture loading support|20%?|HardCoded to PNG, 24/32-bit in Engine::loadTexture 
 ## 3rd Party Integration/Other Ideas
 Feature|Status|Notes
 ---|---|---
-OpenVR Integration|Not Integrated|Proof of concept demo functional, to be integrated into core engine
+OpenVR Integration|Functional|Not fully integrated into Engine, useable enough for test_openvr
 WebVR Integration|Unplanned|Would be cool, requires WebGL, javascript integration/emscripten support
