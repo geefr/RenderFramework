@@ -70,4 +70,41 @@ namespace renderframework { namespace vrhell {
     auto m = deviceToAbsoluteMatrix();
     return { m[3][0], m[3][1], m[3][2] };
   }
+
+  glm::vec3 Device::directionForward() const {
+    auto m = deviceToAbsoluteMatrix();
+    glm::vec4 v = { 0.f,0.f,-1.f,0.f };
+    return m * v;
+  }
+
+  glm::vec3 Device::directionBackward() const {
+    auto m = deviceToAbsoluteMatrix();
+    glm::vec4 v = { 0.f,0.f,1.f,0.f };
+    return m * v;
+  }
+
+  glm::vec3 Device::directionLeft() const {
+    auto m = deviceToAbsoluteMatrix();
+    glm::vec4 v = { -1.f,0.f,0.f,0.f };
+    return m * v;
+  }
+
+  glm::vec3 Device::directionRight() const {
+    auto m = deviceToAbsoluteMatrix();
+    glm::vec4 v = { 1.f,0.f,0.f,0.f };
+    return m * v;
+  }
+
+  glm::vec3 Device::directionUp() const {
+    auto m = deviceToAbsoluteMatrix();
+    glm::vec4 v = { 0.f,1.f,0.f,0.f };
+    return m * v;
+  }
+
+  glm::vec3 Device::directionDown() const {
+    auto m = deviceToAbsoluteMatrix();
+    glm::vec4 v = { 0.f,-1.f,0.f,0.f };
+    return m * v;
+  }
+
 } }

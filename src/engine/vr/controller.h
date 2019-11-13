@@ -5,6 +5,8 @@
 
 #include <map>
 
+#include "openvr/openvr.h"
+
 namespace renderframework { namespace vrhell {
 	class Controller : public Device
 	{

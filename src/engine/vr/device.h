@@ -23,6 +23,14 @@ namespace renderframework { namespace vrhell {
     /// Position of device in world space
     glm::vec3 positionAbsolute() const;
 
+    /// Forward vector
+    glm::vec3 directionForward() const;
+    glm::vec3 directionBackward() const;
+    glm::vec3 directionLeft() const;
+    glm::vec3 directionRight() const;
+    glm::vec3 directionUp() const;
+    glm::vec3 directionDown() const;
+
 		uint32_t mID = 0;
 		vr::ETrackedDeviceClass mDevClass;
 		std::string mName;
