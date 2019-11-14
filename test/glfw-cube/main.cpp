@@ -122,8 +122,8 @@ int main()
 {
 try
 {
-    if( !glfwInit() ) quit("Failed to init glfw");
     glfwSetErrorCallback(errorCallback);
+    if( !glfwInit() ) quit("Failed to init glfw");
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
