@@ -186,9 +186,11 @@ namespace renderframework
         if( mDataDir.empty() )
         {
           auto dataEnv = std::getenv("RENDERFRAMEWORK_ROOT");
-          if( !dataEnv ) quit ("Failed to read root dir. Either set RENDERFRAMEWORK_ROOT or engine.dataDir() = dir");
-          mDataDir = std::string(dataEnv) + "/";
+          if( !dataEnv ) quit ("Failed to read root dir. Either set RENDERFRAMEWORK_ROOT or engine.mDataDir = dir");
+          mDataDir = std::string(dataEnv);
         }
+        // Make sure the data dir has a trailing slash
+        mDataDir += "/";
 
         // Let's load some shaders
         std::shared_ptr<ShaderProgram> phong(new ShaderProgram());
