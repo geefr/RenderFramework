@@ -14,6 +14,8 @@
 
 #include <GLFW/glfw3.h>
 
+#include "cubescene.h"
+
 using namespace renderframework;
 
 [[noreturn]] void quit(std::string msg)
@@ -74,37 +76,11 @@ int main(void)
 
     // Init RenderFramework
     Engine engine;
-    engine.mDataDir = "D:/dev/install/RenderFramework/";
     engine.init();
 
-    // Generate the vertex data and such
-    // TODO: Here's where we would load in the scene, models etc
-    engine.mNode.reset(new nodes::Node());
-    {
-      std::shared_ptr<nodes::MeshNodeDA> cubeNode(new nodes::MeshNodeDA());
-      cubeNode->meshes().emplace_back(new vector::Cube({ 0.f,1.f,0.f }, { .5f, .5f, .5f }));
-      cubeNode->shader() = engine.mShaders["phong"];
-      cubeNode->material() = engine.mMaterials["gold"];
-      engine.mNode->children().push_back(cubeNode);
-    }
+    std::shared_ptr<Scene> cubeScene(new CubeScene(engine, halp));
+    engine.changeScene(cubeScene);
 
-    std::shared_ptr<nodes::MeshNodeDA> leftHandNode(new nodes::MeshNodeDA());
-    leftHandNode->meshes().emplace_back(new vector::Cube({0.f,0.f,0.f}, {.05f,.05f,.5f} ));
-    leftHandNode->shader() = engine.mShaders["phong"];
-    leftHandNode->material() = engine.mMaterials["emerald"];
-    leftHandNode->rotationDelta() = { .0f,.0f,1.f };
-    engine.mNode->children().push_back(leftHandNode);
-
-    std::shared_ptr<nodes::MeshNodeDA> rightHandNode(new nodes::MeshNodeDA());
-    rightHandNode->meshes().emplace_back(new vector::Cube({ 0.f,0.f,0.f }, { .05f,.05f,0.5f }));
-    rightHandNode->shader() = engine.mShaders["phong"];
-    rightHandNode->material() = engine.mMaterials["ruby"];
-    rightHandNode->rotationDelta() = { .0f,.0f,-1.f };
-    engine.mNode->children().push_back(rightHandNode);
-
-    // Init RenderFramework (vector buffers/etc uploaded to gpu here)
-    // TODO: Would be great if we didn't need to manually call this, maybe some kind of resource upload pipeline/thread
-    engine.init2();
 
     // Create the framebuffers for each eye's output
     // In VR we'll end up rendering once for each eye, and then the desktop view aswell if enabled
@@ -127,25 +103,13 @@ int main(void)
     {
       // Update GLFW - mouse/keyboard
       glfwPollEvents();
+
+      // Update OpenVR
+      halp.update();
       // Update RenderFramework
       // Engine stuff, apply node rotations/etc over time
       engine.update();
-      // Update OpenVR
-      halp.update();
 
-      // Update some stuff
-      {
-        // TODO: Lights should be nodes shouldn't they!
-        mat4x4 lightTransform(1.0f);
-        lightTransform = glm::rotate(lightTransform, 0.1f, vec3(0.f,1.f,0.f));
-        engine.light.mPosition = vec4(engine.light.mPosition, 1.0f) * lightTransform;
-      }
-
-      // Positions the controllers
-      auto left = halp.leftHand();
-      auto right = halp.rightHand();
-      if (left) leftHandNode->userModelMatrix(left->deviceToAbsoluteMatrix());
-      if (right) rightHandNode->userModelMatrix(right->deviceToAbsoluteMatrix());
 
       // Position the HMD
       auto hmd = halp.hmd();
