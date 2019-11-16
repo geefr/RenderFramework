@@ -1,4 +1,5 @@
 add_subdirectory(glfw-cube)
+add_subdirectory(glfw-multiscene)
 if( ENABLE_VR )
   add_subdirectory(openvr)
 endif()

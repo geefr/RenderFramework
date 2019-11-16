@@ -98,7 +98,6 @@ namespace renderframework
         std::shared_ptr<nodes::Node> mNode;
         Light light;
 
-
         /// The root directory for the engines data
         /// If not set will be read from RENDERFRAMEWORK_ROOT environment variable
         std::string mDataDir;

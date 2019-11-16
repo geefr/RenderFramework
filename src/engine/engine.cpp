@@ -222,6 +222,7 @@ namespace renderframework
 
     void Engine::init2()
     {
+        if( !mNode ) return;
         mNode->init();
         mNode->upload();
     }
