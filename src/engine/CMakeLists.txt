@@ -5,6 +5,7 @@ endif()
 
 set( rf_cpp 
     engine.cpp
+    scene.cpp
     defaultframebuffer.cpp
     framebufferrendertotexture.cpp
     shaderprogram.cpp
@@ -17,6 +18,7 @@ set( rf_cpp
 
 set( rf_h
     engine.h
+    scene.h
     framebuffer.h
     defaultframebuffer.h
     framebufferrendertotexture.h

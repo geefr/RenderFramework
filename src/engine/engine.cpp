@@ -186,9 +186,11 @@ namespace renderframework
         if( mDataDir.empty() )
         {
           auto dataEnv = std::getenv("RENDERFRAMEWORK_ROOT");
-          if( !dataEnv ) quit ("Failed to read root dir. Either set RENDERFRAMEWORK_ROOT or engine.dataDir() = dir");
-          mDataDir = std::string(dataEnv) + "/";
+          if( !dataEnv ) quit ("Failed to read root dir. Either set RENDERFRAMEWORK_ROOT or engine.mDataDir = dir");
+          mDataDir = std::string(dataEnv);
         }
+        // Make sure the data dir has a trailing slash
+        mDataDir += "/";
 
         // Let's load some shaders
         std::shared_ptr<ShaderProgram> phong(new ShaderProgram());
@@ -216,12 +218,6 @@ namespace renderframework
 
         mTimeStart = std::chrono::high_resolution_clock::now();
         mTimeCurrent = mTimeStart;
-    }
-
-    void Engine::init2()
-    {
-        mNode->init();
-        mNode->upload();
     }
 
     void Engine::viewMatrixLookAt(glm::vec3 eyePos, glm::vec3 target, glm::vec3 up)
@@ -278,7 +274,7 @@ namespace renderframework
       std::chrono::time_point<std::chrono::high_resolution_clock> current = std::chrono::high_resolution_clock::now();
       auto delta = ((double)(current - mTimeCurrent).count()) / 1.0e9;
       mTimeCurrent = current;
-      mNode->update(delta);
+      mScene->update(*this, current, delta);
     }
 
     void Engine::render(float width, float height, const FrameBuffer* framebuffer)
@@ -316,7 +312,7 @@ namespace renderframework
 
       light.setUniforms(*(shader.get()));
 
-      mNode->render(mViewMatrix, mProjectionMatrix);
+      mScene->node()->render(mViewMatrix, mProjectionMatrix);
 
       if (framebuffer) framebuffer->resolve();
     }
@@ -331,6 +327,12 @@ namespace renderframework
       update();
       render(width, height);
     }
+
+    void Engine::changeScene( std::shared_ptr<Scene> scene ) {
+      mScene = scene;
+    }
+
+    std::shared_ptr<Scene> Engine::scene() const { return mScene; }
 
     void Engine::depthTest(bool enable)
     {

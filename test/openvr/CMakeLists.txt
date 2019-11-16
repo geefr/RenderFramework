@@ -3,7 +3,7 @@
 include_directories( ${OPENVR_ROOT}/include )
 link_directories( ${OPENVR_ROOT}/lib )
 
-add_executable( test_openvr main.cpp )
+add_executable( test_openvr main.cpp cubescene.cpp)
 
 target_link_libraries(test_openvr
   rf

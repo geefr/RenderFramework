@@ -7,6 +7,8 @@
 
 #include "dataformats/vector/primitives/cube.h"
 
+#include "cubescene.h"
+
 // TODO: Fix this..
 #ifndef M_PI
 # define M_PI 3.14159265358979323846
@@ -118,12 +120,29 @@ void scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
     */
 }
 
+
+void loadScene1(std::map<std::string,std::shared_ptr<nodes::Node>>& scenes) {
+
+}
+
+void loadScene2(std::map<std::string,std::shared_ptr<nodes::Node>>& scenes) {
+  // A simple spinning cube (Different colour, spinning the other way
+  std::shared_ptr<nodes::Node> scene(new nodes::Node());
+
+  std::shared_ptr<nodes::MeshNodeDA> mesh(new nodes::MeshNodeDA);
+  mesh->meshes().emplace_back(new vector::Cube({0.f,0.f,0.f}, {1.f,1.f,1.f}));
+  mesh->shader() = engine.mShaders["phong"];
+  mesh->material() = engine.mMaterials["ruby"];
+  mesh->rotationDelta() = {0.f,-1.f,0.f};
+  scenes["scene2"] = mesh;
+}
+
 int main()
 {
 try
 {
-    if( !glfwInit() ) quit("Failed to init glfw");
     glfwSetErrorCallback(errorCallback);
+    if( !glfwInit() ) quit("Failed to init glfw");
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
@@ -139,83 +158,47 @@ try
 
     engine.init();
 
-    // Generate the vertex data and such
-    engine.mNode.reset(new nodes::Node());
-    {
-      std::shared_ptr<nodes::MeshNodeDA> cubeNode(new nodes::MeshNodeDA());
-      cubeNode->meshes().emplace_back(new vector::Cube({ 0.f,0.f,20.f }, { 20.f,20.f,20.f }));
-      cubeNode->shader() = engine.mShaders["phong"];
-      cubeNode->material() = engine.mMaterials["emerald"];
-      engine.mNode->children().push_back(cubeNode);
-    }
+    std::map<std::string,std::shared_ptr<Scene>> scenes;
 
-    {
-        std::shared_ptr<nodes::MeshNodeDA> cubeNode(new nodes::MeshNodeDA());
-        cubeNode->meshes().emplace_back(new vector::Cube({2.f,.0f,-2.f}, {2.0f, 2.0f, 2.0f}));
-        cubeNode->meshes().emplace_back(new vector::Cube({-2.f,.0f,-2.f}, {2.0f, 2.0f, 2.0f}));
-        cubeNode->meshes().emplace_back(new vector::Cube({2.f,.0f,2.f}, {2.0f, 2.0f, 2.0f}));
-        cubeNode->meshes().emplace_back(new vector::Cube({-2.f,.0f,2.f}, {2.0f, 2.0f, 2.0f}));
-        cubeNode->shader() = engine.mShaders["phong"];
-        cubeNode->material() = engine.mMaterials["yellow rubber"];
-        cubeNode->translation() = vec3(0.f,2.f,0.f);
-        cubeNode->rotation() = vec3(.1f,.1f,.1f);
-        cubeNode->scale() = vec3(.7f,.7f,.7f);
-        cubeNode->rotationDelta() = vec3(0.0f, 0.02f, 0.0f);
-        engine.mNode->children().push_back(cubeNode);
-    }
+    scenes["scene1"].reset(new CubeScene(engine, "emerald", {0.f,1.f,0.f}));
+    scenes["scene2"].reset(new CubeScene(engine, "ruby", {0.f,-1.f,0.f}));
 
-    std::shared_ptr<nodes::MeshNodeDA> cubeNode(new nodes::MeshNodeDA());
-    cubeNode->scaleDelta() = {1.2f,1.2f,1.2f};
-    {
-        cubeNode->meshes().emplace_back(new vector::Cube({2.f,.0f,-2.f}, {2.0f, 2.0f, 2.0f}));
-        cubeNode->meshes().emplace_back(new vector::Cube({-2.f,.0f,-2.f}, {2.0f, 2.0f, 2.0f}));
-        cubeNode->meshes().emplace_back(new vector::Cube({2.f,.0f,2.f}, {2.0f, 2.0f, 2.0f}));
-        cubeNode->meshes().emplace_back(new vector::Cube({-2.f,.0f,2.f}, {2.0f, 2.0f, 2.0f}));
-        cubeNode->shader() = engine.mShaders["phong"];
-        cubeNode->material() = engine.mMaterials["ruby"];
-        cubeNode->translation() = vec3(0.f,-2.f,0.f);
-        cubeNode->rotationDelta() = vec3(0.0f, -0.01f, 0.0f);
-        engine.mNode->children().push_back(cubeNode);
-    }
-    //engine.mNode->translation() = vec3(0.f,0.f,-5.f);
-engine.mNode->scaleDelta() = {0.99f,0.99f,0.99f};
-//engine.mNode->scale() = {0.2f,0.2f,0.2f};
+    auto lastSceneChange = std::chrono::steady_clock::now();
+    const auto sceneChangeTime = std::chrono::seconds(2);
 
-    engine.init2();
+    engine.changeScene(scenes["scene1"]);
+
+    // Enough light to make things /slightly/ prettier
+    engine.light.mAmbient = {.3f,.3f,.3f};
+    engine.light.mDiffuse = {.5f,.5f,.5f};
+    engine.light.mSpecular = {.1f,.1f,.1f};
+    engine.light.mPosition = {0.f,10.f,0.f};
 
     while(!glfwWindowShouldClose(window))
     {
         // Pet the event doggie so it barks at our callbacks
         glfwPollEvents();
 
-        std::cerr << "scale: " << engine.mNode->scale().x << std::endl;
-        if( engine.mNode->scale().x > 0.8f )
-        {
-            engine.mNode->scaleDelta() = vec3(-0.1f);
+        auto currentTime = std::chrono::steady_clock::now();
+        if( currentTime > lastSceneChange + sceneChangeTime ) {
+          lastSceneChange = currentTime;
+
+          if( engine.scene() == scenes["scene1"] )
+            engine.changeScene(scenes["scene2"]);
+          else
+            engine.changeScene(scenes["scene1"]);
         }
-        else if( engine.mNode->scale().x < 0.001f )
-        {
-            engine.mNode->scaleDelta() = vec3(0.1f);
-        }
-
-        std::cerr << "cubeNode scale: " << engine.mNode->scale().x << std::endl;
-        if( cubeNode->scale().x > 0.8f )
-        {
-            cubeNode->scaleDelta() = vec3(-0.2f);
-        }
-        else if( cubeNode->scale().x < 0.001f )
-        {
-            cubeNode->scaleDelta() = vec3(0.2f);
-        }
-
-
-
-        engine.mNode->rotationDelta() = viewRotDelta;
-
         // Hack, should use framebuffersizecallback ;)
         auto width = 0;
         auto height = 0;
         glfwGetFramebufferSize(window, &width, &height);
+
+        engine.viewMatrixLookAt(
+          {0.f,1.f,-1.f},
+          {0.f,0.f,0.f},
+          {0.f,1.f,0.f});
+        engine.projectionMatrixPerspective(90, width / height, 0.01f, 10.0f);
+
         engine.loop(width, height);
 
         glfwSwapBuffers(window);
