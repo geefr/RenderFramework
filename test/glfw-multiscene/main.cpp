@@ -7,6 +7,8 @@
 
 #include "dataformats/vector/primitives/cube.h"
 
+#include "cubescene.h"
+
 // TODO: Fix this..
 #ifndef M_PI
 # define M_PI 3.14159265358979323846
@@ -120,15 +122,7 @@ void scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 
 
 void loadScene1(std::map<std::string,std::shared_ptr<nodes::Node>>& scenes) {
-  // A simple spinning cube
-  std::shared_ptr<nodes::Node> scene(new nodes::Node());
 
-  std::shared_ptr<nodes::MeshNodeDA> mesh(new nodes::MeshNodeDA);
-  mesh->meshes().emplace_back(new vector::Cube({0.f,0.f,0.f}, {1.f,1.f,1.f}));
-  mesh->shader() = engine.mShaders["phong"];
-  mesh->material() = engine.mMaterials["emerald"];
-  mesh->rotationDelta() = {0.f,1.f,0.f};
-  scenes["scene1"] = mesh;
 }
 
 void loadScene2(std::map<std::string,std::shared_ptr<nodes::Node>>& scenes) {
@@ -164,47 +158,47 @@ try
 
     engine.init();
 
-    std::map<std::string,std::shared_ptr<nodes::Node>> scenes;
+    std::map<std::string,std::shared_ptr<Scene>> scenes;
 
-    loadScene1(scenes);
-    loadScene2(scenes);
-
-    engine.init2();
-
-    scenes["scene1"]->init();
-    scenes["scene1"]->upload();
-    scenes["scene2"]->init();
-    scenes["scene2"]->upload();
+    scenes["scene1"].reset(new CubeScene(engine, "emerald", {0.f,1.f,0.f}));
+    scenes["scene2"].reset(new CubeScene(engine, "ruby", {0.f,-1.f,0.f}));
 
     auto lastSceneChange = std::chrono::steady_clock::now();
     const auto sceneChangeTime = std::chrono::seconds(2);
 
-    engine.mNode = scenes["scene1"];
+    engine.changeScene(scenes["scene1"]);
+
+    // Enough light to make things /slightly/ prettier
+    engine.light.mAmbient = {.3f,.3f,.3f};
+    engine.light.mDiffuse = {.5f,.5f,.5f};
+    engine.light.mSpecular = {.1f,.1f,.1f};
+    engine.light.mPosition = {0.f,10.f,0.f};
 
     while(!glfwWindowShouldClose(window))
     {
         // Pet the event doggie so it barks at our callbacks
         glfwPollEvents();
 
-        engine.viewMatrixLookAt(
-          {0.f,2.f,2.f},
-          {0.f,0.f,0.f},
-          {0.f,1.f,0.f});
-
         auto currentTime = std::chrono::steady_clock::now();
         if( currentTime > lastSceneChange + sceneChangeTime ) {
           lastSceneChange = currentTime;
 
-          if( engine.mNode == scenes["scene1"] )
-            engine.mNode = scenes["scene2"];
+          if( engine.scene() == scenes["scene1"] )
+            engine.changeScene(scenes["scene2"]);
           else
-            engine.mNode = scenes["scene1"];
+            engine.changeScene(scenes["scene1"]);
         }
-
         // Hack, should use framebuffersizecallback ;)
         auto width = 0;
         auto height = 0;
         glfwGetFramebufferSize(window, &width, &height);
+
+        engine.viewMatrixLookAt(
+          {0.f,1.f,-1.f},
+          {0.f,0.f,0.f},
+          {0.f,1.f,0.f});
+        engine.projectionMatrixPerspective(90, width / height, 0.01f, 10.0f);
+
         engine.loop(width, height);
 
         glfwSwapBuffers(window);

@@ -19,6 +19,8 @@
 #include "framebuffer.h"
 #include "defaultframebuffer.h"
 
+#include "scene.h"
+
 namespace renderframework
 {
     class Engine
@@ -26,7 +28,6 @@ namespace renderframework
     public:
         Engine();
         void init();
-        void init2();
 
         /**
          * Update view matrix
@@ -66,7 +67,13 @@ namespace renderframework
         void render(const FrameBuffer* framebuffer);
         /// @deprecated, see Engine::render
         void loop( float width, float height );
-        
+
+        /**
+         * Transition to a new scene
+         */
+        void changeScene( std::shared_ptr<Scene> scene );
+        // void changeScene( std::shared_ptr<Scene> scene, TODO: Scene transition class here? What's the best way to implement these? );
+        std::shared_ptr<Scene> scene() const;
 
         [[noreturn]] static void quit(std::string msg);
 
@@ -95,7 +102,6 @@ namespace renderframework
         // Rendering stuff and hacks below here
         std::map<std::string, std::shared_ptr<materials::PhongMaterialBare>> mMaterials;
         std::map<std::string, std::shared_ptr<ShaderProgram>> mShaders;
-        std::shared_ptr<nodes::Node> mNode;
         Light light;
 
         /// The root directory for the engines data
@@ -128,6 +134,8 @@ namespace renderframework
         vec4 mOrthoSpace = { -10.f,10.f,-10.f,10.f };
 
         DefaultFrameBuffer mDefaultFramebuffer;
+
+        std::shared_ptr<Scene> mScene;
     };
 }
 

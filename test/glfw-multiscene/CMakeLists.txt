@@ -1,5 +1,5 @@
 
-add_executable( test_glfw-multiscene main.cpp )
+add_executable( test_glfw-multiscene main.cpp cubescene.cpp )
 
 target_link_libraries( test_glfw-multiscene
     rf
