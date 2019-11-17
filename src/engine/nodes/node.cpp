@@ -96,4 +96,6 @@ namespace renderframework { namespace nodes {
     void Node::doUpload() {}
     void Node::doRender(mat4x4 nodeMat, mat4x4 viewMat, mat4x4 projMat) {}
 
+    std::shared_ptr<colliders::Collider> Node::collider() { return {}; };
+
 } }

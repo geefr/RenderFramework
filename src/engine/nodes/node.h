@@ -3,6 +3,8 @@
 
 #include "common.h"
 
+#include "../colliders/collider.h"
+
 #include <memory>
 #include <vector>
 
@@ -67,6 +69,12 @@ namespace renderframework { namespace nodes {
 
         // Update this node and any children
         void update(double deltaT);
+
+        // The collider of the node
+        // TODO: Initial collision algorithm with be log(n) or somesuch
+        // So try not to have too many colliders in the scene graph!
+        virtual std::shared_ptr<colliders::Collider> collider();
+
     protected:
         // Children need to implement these
         // Will be called by the public versions of these

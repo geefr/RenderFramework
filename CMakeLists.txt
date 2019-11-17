@@ -41,6 +41,7 @@ if( MSVC )
     include_directories( ${GLEW_INCLUDE_DIRS} )
   endif()
 endif()
+find_package( Boost REQUIRED )
 
 include_directories(${PROJECT_SOURCE_DIR}/src)
 

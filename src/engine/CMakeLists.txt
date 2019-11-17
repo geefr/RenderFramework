@@ -14,6 +14,8 @@ set( rf_cpp
     nodes/meshnodeda.cpp
     materials/material.cpp
     materials/phongmaterialbare.cpp
+    colliders/collider.cpp
+    colliders/cubecollider.cpp
 )
 
 set( rf_h
@@ -33,8 +35,12 @@ set( rf_mat_h
     materials/material.h
     materials/phongmaterialbare.h
 )
+set( rf_col_h
+    colliders/collider.h
+    colliders/cubecollider.h
+)
 
-add_library( rf ${LIBTYPE} ${rf_cpp} ${rf_h} ${rf_nodes_h} ${rf_mat_h} )
+add_library( rf ${LIBTYPE} ${rf_cpp} ${rf_h} ${rf_nodes_h} ${rf_mat_h} ${rf_col_h} )
 
 target_link_libraries( rf rfraster OpenGL::GL glm glfw)
 if( MSVC )
@@ -47,3 +53,4 @@ install( TARGETS rf
 install( FILES ${rf_h} DESTINATION include/RenderFramework/engine/ )
 install( FILES ${rf_nodes_h} DESTINATION include/RenderFramework/engine/nodes/ )
 install( FILES ${rf_mat_h} DESTINATION include/RenderFramework/engine/materials/ )
+install( FILES ${rf_col_h} DESTINATION include/RenderFramework/engine/colliders/ )

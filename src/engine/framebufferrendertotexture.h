@@ -21,7 +21,7 @@ namespace renderframework
        * @throws std::runtime_exception if initialisation fails
        */
       FrameBufferRenderToTexture(uint32_t width, uint32_t height);
-      virtual ~FrameBufferRenderToTexture();
+      virtual ~FrameBufferRenderToTexture() final override;
 
       GLuint textureID() const;
 
@@ -38,8 +38,8 @@ namespace renderframework
       GLuint mResolveTexture;
       GLuint mDepthBuffer;
       GLuint mResolveDepthBuffer;
-      uint32_t mWidth;
-      uint32_t mHeight;
+      GLint mWidth;
+      GLint mHeight;
   };
 };
 
