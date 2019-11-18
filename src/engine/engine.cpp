@@ -3,6 +3,7 @@
 using namespace std;
 
 #include "dataformats/vector/primitives/cube.h"
+#include <functional>
 
 namespace renderframework
 {
@@ -275,6 +276,23 @@ namespace renderframework
       auto delta = ((double)(current - mTimeCurrent).count()) / 1.0e9;
       mTimeCurrent = current;
       mScene->update(*this, current, delta);
+    }
+
+    TODO Engine::collisions() const {
+      // Well this syntax is horrible but you get the idea
+      // Traverse the scene graph and find all the colliders
+      std::function<void( std::shared_ptr<nodes::Node> node,
+          std::set<colliders::Collider, std::shared_ptr<nodes::Node>>& colliders )>
+          gatherColliders = [&]( std::shared_ptr<nodes::Node> node,
+          std::set<colliders::Collider, std::shared_ptr<nodes::Node>>& colliders ) {
+            auto collider = node->collider();
+            if( collider ) colliders.emplace(collider, node);
+            for( auto child : node->children() ) gatherColliders(child, colliders);
+      };
+      std::set<colliders::Collider, std::shared_ptr<nodes::Node>> colliders;
+      gatherColliders( mScene->node(), colliders );
+
+      This line is here to remind me where I stopped :D
     }
 
     void Engine::render(float width, float height, const FrameBuffer* framebuffer)
