@@ -4,6 +4,9 @@ target_link_libraries( rfvector glm )
 if( VECTOR_PRIMITIVES )
     add_subdirectory(primitives)
 endif()
+if( VECTOR_OBJ )
+  add_subdirectory(obj)
+endif()
 
 install( TARGETS rfvector
          ARCHIVE DESTINATION lib/RenderFramework

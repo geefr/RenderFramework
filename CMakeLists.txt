@@ -22,6 +22,7 @@ endif()
 option( ENABLE_TEST "Enable tests" ON )
 option( RASTER_PNG "PNG Support via libPNG" ON )
 option( VECTOR_PRIMITIVES "Basic primitive shapes" ON )
+option( VECTOR_OBJ "Wavefront .obj support" ON )
 option( ENABLE_VR "Enable VR support" OFF )
 
 # Compiler/Tool requirements

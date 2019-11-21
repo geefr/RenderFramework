@@ -38,11 +38,11 @@ namespace renderframework { namespace vector {
          */
         Vector();
 
-        void addVertex(vec3 vertex);
-        void addVertex(vec3 vertex, vec4 color);
         void addVertex(vec3 vertex, vec4 color, vec3 normal);
-    protected:
+        void addVertex(vec3 vertex, vec4 color);
+        void addVertex(vec3 vertex);
 
+    protected:
         std::vector<vec3> mVertices;
         std::vector<vec4> mVertexColors;
         std::vector<vec3> mNormals;
