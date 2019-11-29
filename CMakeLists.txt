@@ -19,6 +19,7 @@ if( NOT LIBTYPE )
     set_property( CACHE LIBTYPE PROPERTY STRINGS "SHARED" "STATIC" )
 endif()
 
+
 option( ENABLE_TEST "Enable tests" ON )
 option( RASTER_PNG "PNG Support via libPNG" ON )
 option( VECTOR_PRIMITIVES "Basic primitive shapes" ON )
@@ -49,6 +50,7 @@ include_directories(${PROJECT_SOURCE_DIR}/src)
 if( ENABLE_VR )
   # TODO: Paths hardcoded for now
   if( NOT OPENVR_ROOT )
+    set( OPENVR_ROOT "" CACHE PATH "Root directory of OpenVR SDK" FORCE )
     message( FATAL_ERROR "VR Support enabled but OPENVR_ROOT not set")
   endif()
 
