@@ -17,9 +17,9 @@ namespace renderframework { namespace vector {
          *
          * @return vertex data for this vector
          */
-        const std::vector<vec3>& vertices();
-        const std::vector<vec4>& vertexColors();
-        const std::vector<vec3>& normals();
+        const std::vector<VertexDef>& vertices();
+        const bool& usesIndices() const;
+        const std::vector<GLuint>& indices();
 
         /**
          * Constructor
@@ -36,16 +36,15 @@ namespace renderframework { namespace vector {
          *
          * @brief Vector
          */
-        Vector();
+        Vector(bool useIndices);
 
-        void addVertex(vec3 vertex, vec4 color, vec3 normal);
-        void addVertex(vec3 vertex, vec4 color);
-        void addVertex(vec3 vertex);
+        void addVertex(VertexDef vertex);
+        void addIndex(GLuint index);
 
     protected:
-        std::vector<vec3> mVertices;
-        std::vector<vec4> mVertexColors;
-        std::vector<vec3> mNormals;
+        std::vector<VertexDef> mVertices;
+        std::vector<GLuint> mIndices;
+        bool mUsesIndices = false;
     };
 } }
 

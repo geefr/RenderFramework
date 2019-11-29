@@ -1,5 +1,5 @@
-#ifndef MESHNODEDA_H
-#define MESHNODEDA_H
+#ifndef MESHNODEDI_H
+#define MESHNODEDI_H
 
 #include "node.h"
 #include "dataformats/vector/vector.h"
@@ -9,14 +9,14 @@
 namespace renderframework { namespace nodes {
 
     /**
-     * A node which renders one or more meshes via glDrawArrays
+     * A node which renders one or more meshes via glDrawElements
      */
-    class MeshNodeDA : public Node
+    class MeshNodeDI : public Node
     {
         using Meshes = std::vector<std::shared_ptr<vector::Vector>>;
     public:
-        MeshNodeDA();
-        virtual ~MeshNodeDA();
+        MeshNodeDI();
+        virtual ~MeshNodeDI();
 
         // Mesh accessors
         Meshes& meshes();
@@ -33,6 +33,7 @@ namespace renderframework { namespace nodes {
         Meshes mMeshes;
         GLuint mVAO = 0;
         GLuint mVBO = 0;
+        GLuint mIBO = 0;
         std::shared_ptr<ShaderProgram> mShader;
         std::shared_ptr<materials::Material> mMaterial;
     };

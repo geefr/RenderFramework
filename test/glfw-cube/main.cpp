@@ -8,6 +8,7 @@
 #include "dataformats/vector/primitives/cube.h"
 
 #include "cubescene.h"
+#include "objscene.h"
 
 // TODO: Fix this..
 #ifndef M_PI
@@ -161,12 +162,15 @@ try
     std::map<std::string,std::shared_ptr<Scene>> scenes;
 
     scenes["scene1"].reset(new CubeScene(engine, "emerald", {0.f,1.f,0.f}));
-    scenes["scene2"].reset(new CubeScene(engine, "ruby", {0.f,-1.f,0.f}));
+    //scenes["scene2"].reset(new CubeScene(engine, "ruby", {0.f,-1.f,0.f}));
+    scenes["scene2"].reset(new ObjScene(engine, {.5f,.5f,0.f} ));
+
 
     auto lastSceneChange = std::chrono::steady_clock::now();
     const auto sceneChangeTime = std::chrono::seconds(2);
 
     engine.changeScene(scenes["scene1"]);
+    //engine.changeScene(scenes["scene2"]);
 
     // Enough light to make things /slightly/ prettier
     engine.light.mAmbient = {.3f,.3f,.3f};
@@ -186,7 +190,9 @@ try
           if( engine.scene() == scenes["scene1"] )
             engine.changeScene(scenes["scene2"]);
           else
-            engine.changeScene(scenes["scene1"]);
+          {
+            //engine.changeScene(scenes["scene1"]);
+          }
         }
         // Hack, should use framebuffersizecallback ;)
         auto width = 0;

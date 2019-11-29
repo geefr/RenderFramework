@@ -7,7 +7,7 @@
 #include <fstream>
 #include <vector>
 #include <chrono>
-#include <set>
+#include <map>
 
 #include "dataformats/raster/png/rfpng.h"
 #include "dataformats/vector/vector.h"
@@ -63,7 +63,7 @@ namespace renderframework
          * Perform collision checks
          * TODO: This is slow, use with care!
          */
-        std::set<colliders::Collider, std::shared_ptr<nodes::Node>> collisions() const;
+        std::multimap<std::shared_ptr<nodes::Node>, std::shared_ptr<nodes::Node>> collisions() const;
 
         /**
          * Render the scene

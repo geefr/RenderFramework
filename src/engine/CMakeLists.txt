@@ -12,6 +12,7 @@ set( rf_cpp
     light.cpp
     nodes/node.cpp
     nodes/meshnodeda.cpp
+    nodes/meshnodedi.cpp
     materials/material.cpp
     materials/phongmaterialbare.cpp
     colliders/collider.cpp
@@ -30,6 +31,7 @@ set( rf_h
 set( rf_nodes_h
     nodes/node.h
     nodes/meshnodeda.h
+    nodes/meshnodedi.h
     )
 set( rf_mat_h
     materials/material.h

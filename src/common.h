@@ -25,7 +25,12 @@ namespace renderframework
         vec2 texCoord;
         vec4 color;
         vec3 normal;
+
+        bool operator == ( const VertexDef& other ) { return coord == other.coord &&
+                                                            texCoord == other.texCoord &&
+                                                            color == other.color &&
+                                                            normal == other.normal; }
     };
 }
 
-#endif // COMMON_H
+#endif

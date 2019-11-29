@@ -278,21 +278,29 @@ namespace renderframework
       mScene->update(*this, current, delta);
     }
 
-    TODO Engine::collisions() const {
+    std::multimap<std::shared_ptr<nodes::Node>, std::shared_ptr<nodes::Node>> Engine::collisions() const {
       // Well this syntax is horrible but you get the idea
       // Traverse the scene graph and find all the colliders
+      /*
       std::function<void( std::shared_ptr<nodes::Node> node,
-          std::set<colliders::Collider, std::shared_ptr<nodes::Node>>& colliders )>
+          std::multimap<std::shared_ptr<nodes::Node>, std::shared_ptr<nodes::Node>>& colliders )>
           gatherColliders = [&]( std::shared_ptr<nodes::Node> node,
-          std::set<colliders::Collider, std::shared_ptr<nodes::Node>>& colliders ) {
+          std::multimap<std::shared_ptr<nodes::Node>, std::shared_ptr<nodes::Node>>& colliders ) {
             auto collider = node->collider();
-            if( collider ) colliders.emplace(collider, node);
+            if( collider )
+            {
+
+            }
+            if( collider ) colliders.emplace_back( std::make_pair(collider, node) );
             for( auto child : node->children() ) gatherColliders(child, colliders);
       };
-      std::set<colliders::Collider, std::shared_ptr<nodes::Node>> colliders;
+      std::multimap<std::shared_ptr<nodes::Node>, std::shared_ptr<nodes::Node>> colliders;
       gatherColliders( mScene->node(), colliders );
+      */
+      throw std::runtime_error("TODO: Collisions not implemented yet");
 
-      This line is here to remind me where I stopped :D
+      //return colliders;
+      return {};
     }
 
     void Engine::render(float width, float height, const FrameBuffer* framebuffer)
