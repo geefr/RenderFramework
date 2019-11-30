@@ -65,21 +65,27 @@ namespace renderframework { namespace nodes {
 
     void Node::render(mat4x4 viewMat, mat4x4 projMat)
     {
-        mat4x4 nodeMat(1.0f);
-        render(nodeMat, viewMat, projMat);
+      if( !mEnabled ) return;
+
+      mat4x4 nodeMat(1.0f);
+      render(nodeMat, viewMat, projMat);
     }
 
     void Node::render(mat4x4 nodeMat, mat4x4 viewMat, mat4x4 projMat)
     {
-        // Apply this node's transformation matrix
-        nodeMat = nodeMat * matrix();
-        
-        doRender(nodeMat, viewMat, projMat);
-        for( auto& c: mChildren ) c->render(nodeMat, viewMat, projMat);
+      if( !mEnabled ) return;
+
+      // Apply this node's transformation matrix
+      nodeMat = nodeMat * matrix();
+
+      doRender(nodeMat, viewMat, projMat);
+      for( auto& c: mChildren ) c->render(nodeMat, viewMat, projMat);
     }
 
     void Node::update(double deltaT)
     {
+      if( !mEnabled ) return;
+
       doUpdate(deltaT);
       for( auto& c : mChildren ) c->update(deltaT);
     }
@@ -97,5 +103,7 @@ namespace renderframework { namespace nodes {
     void Node::doRender(mat4x4 nodeMat, mat4x4 viewMat, mat4x4 projMat) {}
 
     std::shared_ptr<colliders::Collider> Node::collider() { return {}; };
+
+    bool& Node::enabled() { return mEnabled; }
 
 } }

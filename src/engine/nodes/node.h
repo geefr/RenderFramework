@@ -75,6 +75,10 @@ namespace renderframework { namespace nodes {
         // So try not to have too many colliders in the scene graph!
         virtual std::shared_ptr<colliders::Collider> collider();
 
+        /// Enable/Disable the node
+        /// Disabled nodes won't be updated or rendered
+        bool& enabled();
+
     protected:
         // Children need to implement these
         // Will be called by the public versions of these
@@ -99,6 +103,8 @@ namespace renderframework { namespace nodes {
         mat4x4 mUserModelMat = mat4x4(1.f);
 
         Children mChildren;
+
+        bool mEnabled = true;
     };
 } }
 #endif // NODE_H
