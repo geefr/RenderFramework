@@ -11,4 +11,5 @@ target_link_libraries( test_glfw-cube
     glfw )
 
 install( TARGETS test_glfw-cube
-         ARCHIVE DESTINATION bin )
+         ARCHIVE DESTINATION bin
+         RUNTIME DESTINATION bin)
