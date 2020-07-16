@@ -1,5 +1,5 @@
 # RenderFramework
-A 3D rendering framework, developed as needed for my projects
+A 3D rendering framework, developed as needed for my projects. Generally I'm not updating this any more due to time, but will be pulling sections out for projects as needed. The most useful bit here may be the wrappers around OpenVR, which took a little while to get working the first time round.
 
 # Goals
 1. Support common 3D rendering techniques
