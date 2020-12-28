@@ -28,6 +28,7 @@ option( ENABLE_VR "Enable VR support" OFF )
 
 # Compiler/Tool requirements
 set( CMAKE_CXX_STANDARD 17 )
+set(OpenGL_GL_PREFERENCE GLVND)
 
 if( NOT MSVC )
   set( CMAKE_CXX_FLAGS "-Werror=all" )
@@ -48,13 +49,13 @@ find_package( Boost REQUIRED )
 include_directories(${PROJECT_SOURCE_DIR}/src)
 
 if( ENABLE_VR )
-  # TODO: Paths hardcoded for now
-  if( NOT OPENVR_ROOT )
-    set( OPENVR_ROOT "" CACHE PATH "Root directory of OpenVR SDK" FORCE )
-    message( FATAL_ERROR "VR Support enabled but OPENVR_ROOT not set")
-  endif()
-
   if( MSVC )
+    # TODO: Paths hardcoded for now
+    if( NOT OPENVR_ROOT )
+      set( OPENVR_ROOT "" CACHE PATH "Root directory of OpenVR SDK" FORCE )
+      message( FATAL_ERROR "VR Support enabled but OPENVR_ROOT not set")
+    endif()
+
     set( OPENVR_LIB "openvr_api64" )
   else()
     set( OPENVR_LIB "openvr_api" )

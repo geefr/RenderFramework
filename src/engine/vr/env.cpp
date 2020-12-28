@@ -1,6 +1,5 @@
 
-#include "GL/glew.h"
-
+#include "common.h"
 #include "glm/glm.hpp"
 
 #include "env.h"
